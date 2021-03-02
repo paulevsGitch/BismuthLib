@@ -1,0 +1,25 @@
+#version 430 core
+
+in vec4 color;
+in vec3 pos;
+in vec2 uvAtlas;
+in vec2 uvLight;
+
+layout(binding = 0) uniform sampler2D atlas;
+layout(binding = 2) uniform sampler2D lightmap;
+layout(binding = 6) uniform sampler3D blocklight;
+
+void main() {
+	vec4 text = texture(atlas, uvAtlas);
+	vec4 light = vec4(texture(lightmap, uvLight).rgb, 1);
+	vec4 colorLight = vec4(texture(blocklight, pos).rgb, text.a * color.a);
+	
+	//vec4 mixed = color * text * light;
+	//gl_FragColor = mixed + colorLight * mixed;
+	
+	//float blend = max(colorLight.r, max(colorLight.g, colorLight.b));
+	//gl_FragColor = mix(mixed, colorLight * text, blend);
+	
+	vec4 mixed = color * text;
+	gl_FragColor = mixed * light + colorLight * mixed;
+}
