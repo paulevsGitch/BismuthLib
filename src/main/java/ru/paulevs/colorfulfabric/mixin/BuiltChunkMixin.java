@@ -20,7 +20,6 @@ import ru.paulevs.colorfulfabric.storage.ColoredStorage;
 
 @Mixin(BuiltChunk.class)
 public class BuiltChunkMixin implements ColoredRenderData {
-	//private static final Texture3D EMPTY = new Texture3D();
 	private Texture3D texture;
 	
 	@Shadow

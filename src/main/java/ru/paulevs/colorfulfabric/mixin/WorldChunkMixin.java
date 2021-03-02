@@ -23,6 +23,7 @@ import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.UpgradeData;
 import net.minecraft.world.chunk.WorldChunk;
+import ru.paulevs.colorfulfabric.ColorfulFabricClient;
 import ru.paulevs.colorfulfabric.storage.ColoredStorage;
 
 @Mixin(WorldChunk.class)
@@ -41,14 +42,19 @@ public class WorldChunkMixin {
 			for (ChunkSection section: this.sections) {
 				if (section != null) {
 					START.setY(section.getYOffset());
+					boolean updated = false;
 					for (int i = 0; i < 4096; i++) {
 						int x = i & 15;
 						int y = (i >> 4) & 15;
 						int z = i >> 8;
 						BlockState state = section.getBlockState(x, y, z);
 						if (state.getLuminance() > 0) {
-							cf_setSource(POS.set(START).move(x, y, z), state);
+							ColoredStorage.addLightSourceDirectly(POS.set(START).move(x, y, z), state);
+							updated = true;
 						}
+					}
+					if (updated) {
+						ColorfulFabricClient.UPDATE.add(START.toImmutable());
 					}
 				}
 			}
@@ -60,20 +66,15 @@ public class WorldChunkMixin {
 		if (info.getReturnValue() != null) {
 			int light = state.getLuminance();
 			if (light > 0) {
-				cf_setSource(pos, state);
+				ColoredStorage.addLightSource(pos, state);
 			}
 			else {
-				BlockState stateOld = info.getReturnValue();
-				light = stateOld.getLuminance();
-				if (light > 0) {
-					System.out.println("Recalculate " + pos);
-					ColoredStorage.removeLight(pos.getX(), pos.getY(), pos.getZ(), 2);
-				}
+				//BlockState stateOld = info.getReturnValue();
+				//light = stateOld.getLuminance();
+				//if (light > 0) {
+					ColoredStorage.removeLight(pos, 2);
+				//}
 			}
 		}
-	}
-	
-	private void cf_setSource(BlockPos pos, BlockState state) {
-		ColoredStorage.addLightSource(pos.getX(), pos.getY(), pos.getZ(), state);
 	}
 }

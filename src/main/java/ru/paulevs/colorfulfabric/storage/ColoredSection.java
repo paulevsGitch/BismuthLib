@@ -46,14 +46,6 @@ public class ColoredSection {
 	}
 	
 	public Texture3D makeTexture(BlockPos pos, Texture3D src) {
-		/*for (int i = 0; i < 27; i++) {
-			if (i != 13) {
-				int x = (((i % 3) - 1) << 4) + pos.getX();
-				int y = ((((i / 3) % 3) - 1) << 4) + pos.getY();
-				int z = (((i / 9) - 1) << 4) + pos.getZ();
-				ColoredSection section = ColoredStorage.getSection(x, y, z);
-			}
-		}*/
 		for (int i = 0; i < OFFSETS.length; i++) {
 			int index = INDECIES[i];
 			int index2 = INDECIES2[i];
