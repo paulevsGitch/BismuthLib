@@ -13,10 +13,9 @@ import net.minecraft.client.gl.VertexBuffer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.chunk.ChunkBuilder.BuiltChunk;
 import net.minecraft.util.math.BlockPos;
+import ru.paulevs.colorfulfabric.ColorLightManager;
 import ru.paulevs.colorfulfabric.ColoredRenderData;
-import ru.paulevs.colorfulfabric.ColorfulFabricClient;
 import ru.paulevs.colorfulfabric.Texture3D;
-import ru.paulevs.colorfulfabric.storage.ColoredStorage;
 
 @Mixin(BuiltChunk.class)
 public class BuiltChunkMixin implements ColoredRenderData {
@@ -30,28 +29,20 @@ public class BuiltChunkMixin implements ColoredRenderData {
 	@Inject(method = "getBuffer", at = @At("TAIL"))
 	private void cf_getBuffer(RenderLayer layer, CallbackInfoReturnable<VertexBuffer> info) {
 		if (RenderSystem.isOnRenderThread()) {
-			Texture3D tex = getTexture();
-			
 			BlockPos pos = getOrigin();
-			if (tex == null) {
-				tex = ColoredStorage.getTexture3D(pos, tex);
-				setTexture(tex);
-			}
-			else if (ColorfulFabricClient.UPDATE.contains(pos)) {
-				ColorfulFabricClient.UPDATE.remove(pos);
-				tex = ColoredStorage.getTexture3D(pos, tex);
-			}
-			
+			Texture3D tex = getTexture();
+			tex = ColorLightManager.getTexture3D(pos, tex);
+			setTexture(tex);
 			tex.bind();
 		}
 	}
 	
 	@Inject(method = "delete", at = @At("TAIL"))
 	private void cf_delete(CallbackInfo info) {
-		Texture3D tex = getTexture();
+		/*Texture3D tex = getTexture();
 		if (tex != null) {
 			tex.delete();
-		}
+		}*/
 	}
 
 	@Override

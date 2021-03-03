@@ -1,22 +1,16 @@
 package ru.paulevs.colorfulfabric;
 
 import java.awt.Color;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import ru.paulevs.colorfulfabric.storage.BlockStateColors;
 
 public class ColorfulFabricClient implements ClientModInitializer {
-	public static final Set<BlockPos> UPDATE = Sets.newHashSet();
-	
 	@Override
 	public void onInitializeClient() {
 		BlockStateColors.load();
@@ -31,6 +25,8 @@ public class ColorfulFabricClient implements ClientModInitializer {
 				BlockStateColors.addColor(block, color);
 			}
 		}
+		
+		ColorLightManager.start();
 	}
 	
 	private Block getBlock(String modID, String name) {
