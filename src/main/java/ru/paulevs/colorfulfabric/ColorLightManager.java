@@ -18,11 +18,13 @@ import ru.paulevs.colorfulfabric.storage.LightSourceInfo;
 public class ColorLightManager {
 	private static final ConcurrentLinkedQueue<LightSourceInfo> LIGHT_QUEUE = new ConcurrentLinkedQueue<LightSourceInfo>();
 	private static final ConcurrentLinkedQueue<BlockPos> REMOVE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
+	private static final ConcurrentLinkedQueue<BlockPos> UPDATE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
 	public static final Map<BlockPos, LightDataStorage> LIGHT_DATA = Collections.synchronizedMap(Maps.newHashMap());
 	private static final Map<BlockPos, ColoredSection> SECTIONS = Maps.newHashMap();
 	private static final Mutable POS_BLOCK = new Mutable();
 	private static final Mutable POS = new Mutable();
 	private static Thread lightUpdater;
+	private static boolean canPick;
 	private static boolean run;
 	
 	public static void start() {
@@ -46,6 +48,14 @@ public class ColorLightManager {
 						getSection(pos.getX(), pos.getY(), pos.getZ()).addLightSource(info);
 						placeFastLight(pos.getX(), pos.getY(), pos.getZ(), info.getColor());
 						updateSections(pos.getX(), pos.getY(), pos.getZ(), 2);
+					}
+					
+					BlockPos sPos = UPDATE_QUEUE.poll();
+					if (sPos != null) {
+						ColoredSection section = getSectionDirect(sPos.getX(), sPos.getY(), sPos.getZ());
+						BlockPos updatePos = new BlockPos(sPos.getX() << 4, sPos.getY() << 4, sPos.getZ() << 4);
+						LightDataStorage storage = section.makeStorage();
+						LIGHT_DATA.put(updatePos, storage);
 					}
 				}
 			}
@@ -132,19 +142,27 @@ public class ColorLightManager {
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
 				for (int k = z1; k <= z2; k++) {
-					addSectionUpdate(getSectionDirect(i, j, k));
+					//addSectionUpdate(getSectionDirect(i, j, k));
+					UPDATE_QUEUE.add(new BlockPos(i, j, k));
 				}
 			}
 		}
 	}
 	
 	public static Texture3D getTexture3D(BlockPos pos, Texture3D src) {
-		LightDataStorage data = LIGHT_DATA.get(pos);
-		if (data != null) {
-			LIGHT_DATA.remove(pos);
-			return data.makeTexture(src);
+		if (canPick) {
+			LightDataStorage data = LIGHT_DATA.get(pos);
+			if (data != null) {
+				canPick = false;
+				LIGHT_DATA.remove(pos);
+				return data.makeTexture(src);
+			}
 		}
 		return src == null ? new Texture3D() : src;
+	}
+	
+	public static void enablePick() {
+		canPick = true;
 	}
 	
 	private static void updateSections(int x, int y, int z, int radius) {
@@ -157,17 +175,18 @@ public class ColorLightManager {
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
 				for (int k = z1; k <= z2; k++) {
-					addSectionUpdate(getSectionDirect(i, j, k));
+					//addSectionUpdate(getSectionDirect(i, j, k));
+					UPDATE_QUEUE.add(new BlockPos(i, j, k));
 				}
 			}
 		}
 	}
 	
-	private static void addSectionUpdate(ColoredSection section) {
+	/*private static void addSectionUpdate(ColoredSection section) {
 		BlockPos pos = section.getPos();
 		BlockPos updatePos = new BlockPos(pos.getX() << 4, pos.getY() << 4, pos.getZ() << 4);
 		LIGHT_DATA.put(updatePos, section.makeStorage());
-	}
+	}*/
 	
 	private static void addColor(int x, int y, int z, int r, int g, int b) {
 		getSection(x, y, z).addColor(x & 15, y & 15, z & 15, r, g, b);
