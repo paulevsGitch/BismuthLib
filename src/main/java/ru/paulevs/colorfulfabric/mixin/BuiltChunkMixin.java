@@ -39,10 +39,11 @@ public class BuiltChunkMixin implements ColoredRenderData {
 	
 	@Inject(method = "delete", at = @At("TAIL"))
 	private void cf_delete(CallbackInfo info) {
-		/*Texture3D tex = getTexture();
+		Texture3D tex = getTexture();
 		if (tex != null) {
+			setTexture(null);
 			tex.delete();
-		}*/
+		}
 	}
 
 	@Override

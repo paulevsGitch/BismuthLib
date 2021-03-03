@@ -7,9 +7,11 @@
 		"WorldChunkMixin"
 	],
 	"client": [
+		"BakedModelManagerMixin",
 		"MinecraftClientMixin",
 		"WorldRendererMixin",
-		"BuiltChunkMixin"
+		"BuiltChunkMixin",
+		"SpriteAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
