@@ -23,7 +23,7 @@ public class ColoredStorage {
 		return getSection(POS);
 	}
 	
-	private static ColoredSection getSectionDirect(int x, int y, int z) {
+	protected static ColoredSection getSectionDirect(int x, int y, int z) {
 		POS.set(x, y, z);
 		return getSection(POS);
 	}
