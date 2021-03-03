@@ -33,6 +33,7 @@ public class Texture3D {
 		}
 		buffer.flip();
 		GL20.glTexImage3D(GL20.GL_TEXTURE_3D, 0, GL20.GL_RGB8, SIDE, SIDE, SIDE, 0, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, buffer);
+		GL20.glBindTexture(GL20.GL_TEXTURE_3D, 0);
 	}
 	
 	// Will not work if texture side is not power of 2
@@ -46,6 +47,7 @@ public class Texture3D {
 		}
 		buffer.flip();
 		GL20.glTexImage3D(GL20.GL_TEXTURE_3D, 0, GL20.GL_RGB8, SIDE, SIDE, SIDE, 0, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, buffer);
+		GL20.glBindTexture(GL20.GL_TEXTURE_3D, 0);
 		return this;
 	}
 	
@@ -63,6 +65,7 @@ public class Texture3D {
 			pixel.flip();
 			GL20.glTexSubImage3D(GL20.GL_TEXTURE_3D, 0, x, y, z, 1, 1, 1, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, pixel);
 		}
+		GL20.glBindTexture(GL20.GL_TEXTURE_3D, 0);
 		return this;
 	}
 	

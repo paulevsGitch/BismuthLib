@@ -4,7 +4,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -33,18 +32,19 @@ public class BuiltChunkMixin implements ColoredRenderData {
 			Texture3D tex = getTexture();
 			tex = ColorLightManager.getTexture3D(pos, tex);
 			setTexture(tex);
+			RenderSystem.assertThread(RenderSystem::isOnRenderThread);
 			tex.bind();
 		}
 	}
 	
-	@Inject(method = "delete", at = @At("TAIL"))
+	/*@Inject(method = "delete", at = @At("TAIL"))
 	private void cf_delete(CallbackInfo info) {
 		Texture3D tex = getTexture();
 		if (tex != null) {
 			setTexture(null);
 			tex.delete();
 		}
-	}
+	}*/
 
 	@Override
 	public Texture3D getTexture() {

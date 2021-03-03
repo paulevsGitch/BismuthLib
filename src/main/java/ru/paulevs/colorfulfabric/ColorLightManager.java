@@ -21,6 +21,7 @@ public class ColorLightManager {
 	private static final ConcurrentLinkedQueue<BlockPos> UPDATE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
 	public static final Map<BlockPos, LightDataStorage> LIGHT_DATA = Collections.synchronizedMap(Maps.newHashMap());
 	private static final Map<BlockPos, ColoredSection> SECTIONS = Maps.newHashMap();
+	private static final Map<BlockPos, Texture3D> TEXTURES = Maps.newHashMap();
 	private static final Mutable POS_BLOCK = new Mutable();
 	private static final Mutable POS = new Mutable();
 	private static Thread lightUpdater;
@@ -150,15 +151,25 @@ public class ColorLightManager {
 	}
 	
 	public static Texture3D getTexture3D(BlockPos pos, Texture3D src) {
-		if (canPick) {
+		if (canPick) {//TEXTURES
 			LightDataStorage data = LIGHT_DATA.get(pos);
 			if (data != null) {
 				canPick = false;
 				LIGHT_DATA.remove(pos);
-				return data.makeTexture(src);
+				src = data.makeTexture(src);
+				TEXTURES.put(pos.toImmutable(), src);
+				return src;
+			}
+			Texture3D tex = TEXTURES.get(pos);
+			if (tex != null) {
+				return tex;
 			}
 		}
-		return src == null ? new Texture3D() : src;
+		if (src == null) {
+			src = new Texture3D();
+			TEXTURES.put(pos.toImmutable(), src);
+		}
+		return src;
 	}
 	
 	public static void enablePick() {
