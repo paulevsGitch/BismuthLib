@@ -25,14 +25,11 @@ public class ColorLightManager {
 	private static final Mutable POS_BLOCK = new Mutable();
 	private static final Mutable POS = new Mutable();
 	private static Thread lightUpdater;
+	private static Texture3D empty;
 	private static boolean canPick;
 	private static boolean run;
 	
 	public static void start() {
-		LIGHT_QUEUE.clear();
-		LIGHT_DATA.clear();
-		SECTIONS.clear();
-		
 		run = true;
 		lightUpdater = new Thread() {
 			@Override
@@ -143,36 +140,32 @@ public class ColorLightManager {
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
 				for (int k = z1; k <= z2; k++) {
-					//addSectionUpdate(getSectionDirect(i, j, k));
 					UPDATE_QUEUE.add(new BlockPos(i, j, k));
 				}
 			}
 		}
 	}
 	
-	public static Texture3D getTexture3D(BlockPos pos, Texture3D src) {
-		if (canPick) {//TEXTURES
+	public static Texture3D getTexture3D(BlockPos pos) {
+		if (canPick) {
 			LightDataStorage data = LIGHT_DATA.get(pos);
 			if (data != null) {
 				canPick = false;
 				LIGHT_DATA.remove(pos);
-				src = data.makeTexture(src);
-				TEXTURES.put(pos.toImmutable(), src);
-				return src;
-			}
-			Texture3D tex = TEXTURES.get(pos);
-			if (tex != null) {
+				Texture3D tex = TEXTURES.get(pos);
+				tex = data.makeTexture(tex);
+				TEXTURES.put(pos.toImmutable(), tex);
 				return tex;
 			}
 		}
-		if (src == null) {
-			src = TEXTURES.get(pos);
-			if (src == null) {
-				src = new Texture3D();
-				TEXTURES.put(pos.toImmutable(), src);
+		Texture3D tex = TEXTURES.get(pos);
+		if (tex == null) {
+			if (empty == null) {
+				empty = new Texture3D();
 			}
+			return empty;
 		}
-		return src;
+		return tex;
 	}
 	
 	public static void enablePick() {

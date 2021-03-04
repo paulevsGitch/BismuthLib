@@ -16,8 +16,8 @@ void main() {
 	vec4 mixed = color * text;
 	vec4 result = mixed * light + colorLight * mixed;
 	result.a = mixed.a;
-	result.r = min(result.r, mixed.r * 1.3);
-	result.g = min(result.g, mixed.g * 1.3);
-	result.b = min(result.b, mixed.b * 1.3);
+	//result.r = min(result.r, mixed.r * 1.3);
+	//result.g = min(result.g, mixed.g * 1.3);
+	//result.b = min(result.b, mixed.b * 1.3);
 	gl_FragColor = result;
 }

@@ -13,7 +13,7 @@ public class Texture3D {
 	// Cube with 16 blocks side and 3 bytes per color
 	private static final int SIDE = 18;
 	private static final int DATA_SIZE = 3;
-	private static final int VOLUME = SIDE * SIDE * SIDE;
+	public static final int VOLUME = SIDE * SIDE * SIDE;
 	private final ByteBuffer pixel = BufferUtils.createByteBuffer(DATA_SIZE);
 	private final int textureID;
 	
