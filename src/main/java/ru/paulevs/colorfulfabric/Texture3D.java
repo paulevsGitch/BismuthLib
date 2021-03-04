@@ -36,11 +36,10 @@ public class Texture3D {
 			int x = i % 18;
 			int y = (i / 18) % 18;
 			int z = i / 324;
-			pixel.rewind();
 			pixel.put(red[i]);
 			pixel.put(green[i]);
 			pixel.put(blue[i]);
-			pixel.flip();
+			pixel.rewind();
 			GL20.glTexSubImage3D(GL20.GL_TEXTURE_3D, 0, x, y, z, 1, 1, 1, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, pixel);
 		}
 		GL20.glBindTexture(GL20.GL_TEXTURE_3D, 0);
