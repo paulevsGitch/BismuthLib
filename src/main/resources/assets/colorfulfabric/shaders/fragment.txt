@@ -4,6 +4,7 @@ in vec4 color;
 in vec3 pos;
 in vec2 uvAtlas;
 in vec2 uvLight;
+in vec4 fog;
 
 layout(binding = 0) uniform sampler2D atlas;
 layout(binding = 2) uniform sampler2D lightmap;
@@ -15,6 +16,7 @@ void main() {
 	vec4 colorLight = vec4(texture(blocklight, pos).rgb, 1.0);
 	vec4 mixed = color * text;
 	vec4 result = mixed * light * (colorLight + vec4(1.0));
+	result = mix(result, fog, fog.a);
 	result.a = mixed.a;
 	gl_FragColor = result;
 }

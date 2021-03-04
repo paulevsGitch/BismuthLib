@@ -4,6 +4,7 @@ varying out vec4 color;
 varying out vec3 pos;
 varying out vec2 uvAtlas;
 varying out vec2 uvLight;
+varying out vec4 fog;
 
 void main() {
 	color = gl_Color;
@@ -11,4 +12,6 @@ void main() {
 	uvAtlas = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	uvLight = (gl_TextureMatrix[2] * gl_MultiTexCoord2).xy;
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	float depth = clamp((gl_Position.z - gl_Fog.start) * gl_Fog.scale, 0.0, 1.0);
+	fog = vec4(gl_Fog.color.rgb, depth);
 }

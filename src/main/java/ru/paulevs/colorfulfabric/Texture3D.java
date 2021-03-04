@@ -12,8 +12,8 @@ import net.minecraft.client.texture.TextureUtil;
 import ru.paulevs.colorfulfabric.storage.Constants;
 
 public class Texture3D {
+	private static final ByteBuffer PIXELS = BufferUtils.createByteBuffer(Constants.ALLOCATE_SIZE);
 	private static final byte[] EMPY = new byte[Constants.VOLUME];
-	private final ByteBuffer pixels = BufferUtils.createByteBuffer(Constants.ALLOCATE_SIZE);
 	private final int textureID;
 	
 	public Texture3D() {
@@ -27,13 +27,15 @@ public class Texture3D {
 	
 	public Texture3D fillTexture(byte[] red, byte[] green, byte[] blue) {
 		initTexture();
+		PIXELS.rewind();
 		for (int i = 0; i < Constants.VOLUME; i++) {
-			pixels.put(red[i]);
-			pixels.put(green[i]);
-			pixels.put(blue[i]);
+			PIXELS.put(red[i]);
+			PIXELS.put(green[i]);
+			PIXELS.put(blue[i]);
+			PIXELS.put((byte) 1);
 		}
-		pixels.flip();
-		GL13.glTexImage3D(GL13.GL_TEXTURE_3D, 0, GL11.GL_RGB8, Constants.SIDE, Constants.SIDE, Constants.SIDE, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixels);
+		PIXELS.flip();
+		GL13.glTexImage3D(GL13.GL_TEXTURE_3D, 0, GL11.GL_RGBA8, Constants.SIDE, Constants.SIDE, Constants.SIDE, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, PIXELS);
 		GL11.glBindTexture(GL13.GL_TEXTURE_3D, 0);
 		return this;
 	}
