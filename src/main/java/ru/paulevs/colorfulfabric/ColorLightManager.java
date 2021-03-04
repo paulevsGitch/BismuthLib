@@ -182,18 +182,11 @@ public class ColorLightManager {
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
 				for (int k = z1; k <= z2; k++) {
-					//addSectionUpdate(getSectionDirect(i, j, k));
 					UPDATE_QUEUE.add(new BlockPos(i, j, k));
 				}
 			}
 		}
 	}
-	
-	/*private static void addSectionUpdate(ColoredSection section) {
-		BlockPos pos = section.getPos();
-		BlockPos updatePos = new BlockPos(pos.getX() << 4, pos.getY() << 4, pos.getZ() << 4);
-		LIGHT_DATA.put(updatePos, section.makeStorage());
-	}*/
 	
 	private static void addColor(int x, int y, int z, int r, int g, int b) {
 		getSection(x, y, z).addColor(x & 15, y & 15, z & 15, r, g, b);

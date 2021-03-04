@@ -41,17 +41,27 @@ public class ColoredSection {
 	
 	private void copyValues(int index, int x, int y, int z) {
 		if (x == 0 || x == 15 || y == 0 || y == 15 || z == 0 || z == 15) {
-			int nx = x == 0 ? 17 : x == 15 ? 0 : x + 1;
-			int ny = y == 0 ? 17 : y == 15 ? 0 : y + 1;
-			int nz = z == 0 ? 17 : z == 15 ? 0 : z + 1;
-			int sx = (x == 0 ? -1 : x == 15 ? +1 : 0) + pos.getX();
-			int sy = (y == 0 ? -1 : y == 15 ? +1 : 0) + pos.getY();
-			int sz = (z == 0 ? -1 : z == 15 ? +1 : 0) + pos.getZ();
-			int index2 = getIndex(nx, ny, nz);
-			ColoredSection section = ColorLightManager.getSectionDirect(sx, sy, sz);
-			section.red[index2] = red[index];
-			section.green[index2] = green[index];
-			section.blue[index2] = blue[index];
+			int sx1 = x == 0 ? pos.getX() - 1 : pos.getX();
+			int sy1 = y == 0 ? pos.getY() - 1 : pos.getY();
+			int sz1 = z == 0 ? pos.getZ() - 1 : pos.getZ();
+			int sx2 = x == 15 ? pos.getX() + 1 : pos.getX();
+			int sy2 = y == 15 ? pos.getY() + 1 : pos.getY();
+			int sz2 = z == 15 ? pos.getZ() + 1 : pos.getZ();
+			
+			for (int sx = sx1; sx <= sx2; sx++) {
+				for (int sy = sy1; sy <= sy2; sy++) {
+					for (int sz = sz1; sz <= sz2; sz++) {
+						ColoredSection section = ColorLightManager.getSectionDirect(sx, sy, sz);
+						int nx = sx == pos.getX() ? x + 1 : x == 0 ? 17 : x == 15 ? 0 : x + 1;
+						int ny = sy == pos.getY() ? y + 1 : y == 0 ? 17 : y == 15 ? 0 : y + 1;
+						int nz = sz == pos.getZ() ? z + 1 : z == 0 ? 17 : z == 15 ? 0 : z + 1;
+						int index2 = getIndex(nx, ny, nz);
+						section.red[index2] = red[index];
+						section.green[index2] = green[index];
+						section.blue[index2] = blue[index];
+					}
+				}
+			}
 		}
 	}
 	

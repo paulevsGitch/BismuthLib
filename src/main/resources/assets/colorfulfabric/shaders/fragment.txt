@@ -14,11 +14,7 @@ void main() {
 	vec4 light = vec4(texture(lightmap, uvLight).rgb, 1);
 	vec4 colorLight = vec4(texture(blocklight, pos).rgb, 1.0);
 	vec4 mixed = color * text;
-	//vec4 result = mixed * light + colorLight * mixed;
 	vec4 result = mixed * light * (colorLight + vec4(1.0));
 	result.a = mixed.a;
-	//result.r = min(result.r, mixed.r * 1.3);
-	//result.g = min(result.g, mixed.g * 1.3);
-	//result.b = min(result.b, mixed.b * 1.3);
 	gl_FragColor = result;
 }
