@@ -70,5 +70,6 @@ public class ShaderUtil {
 		int fragment = makeShader(GL20.GL_FRAGMENT_SHADER, fragmentShader);
 		program = makeProgram(vertex, fragment);
 		GL20.glUniform1i(GL20.glGetUniformLocation(program, "blocklight"), 6);
+		unuseProgram();
 	}
 }

@@ -166,8 +166,11 @@ public class ColorLightManager {
 			}
 		}
 		if (src == null) {
-			src = new Texture3D();
-			TEXTURES.put(pos.toImmutable(), src);
+			src = TEXTURES.get(pos);
+			if (src == null) {
+				src = new Texture3D();
+				TEXTURES.put(pos.toImmutable(), src);
+			}
 		}
 		return src;
 	}

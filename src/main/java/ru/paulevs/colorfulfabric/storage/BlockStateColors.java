@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -64,20 +64,34 @@ public class BlockStateColors {
 										});
 									}
 									else {
-										BlockState blockState = block.getDefaultState();
 										String[] states = stateString.split(",");
+										Map<String, String> values = Maps.newHashMap();
 										for (String state: states) {
 											int separator = state.indexOf('=');
 											String name = state.substring(0, separator);
 											String value = state.substring(separator + 1);
-											Property<?> property = manager.getProperty(name);
-											if (property != null) {
-												blockState = appendProperty(blockState, property, value);
+											values.put(name, value);
+										}
+										
+										manager.getStates().forEach((state) -> {
+											if (state.getLuminance() > 0) {
+												Iterator<Property<?>> iterator = state.getProperties().iterator();
+												boolean add = true;
+												while (iterator.hasNext()) {
+													Property<?> property = iterator.next();
+													String prop = property.getName();
+													if (values.containsKey(prop)) {
+														String value = state.get(property).toString();
+														if (!values.get(prop).equals(value)) {
+															add = false;
+														}
+													}
+												}
+												if (add) {
+													COLORS.put(state, color);
+												}
 											}
-										}
-										if (blockState.getLuminance() > 0) {
-											COLORS.put(blockState, color);
-										}
+										});
 									}
 								}
 							}
@@ -102,14 +116,6 @@ public class BlockStateColors {
 				});
 			});
 		}
-	}
-
-	private static <T extends Comparable<T>> BlockState appendProperty(BlockState state, Property<T> property, String valueString) {
-		Optional<T> optional = property.parse(valueString);
-		if (optional.isPresent()) {
-			state = (BlockState) state.with(property, optional.get());
-		}
-		return state;
 	}
 	
 	public static Color getColor(BlockState state) {
