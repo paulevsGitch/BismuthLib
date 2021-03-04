@@ -16,7 +16,7 @@ public class Texture3D {
 	public static final int VOLUME = SIDE * SIDE * SIDE;
 	private static final int ALLOCATE_SIZE = VOLUME * DATA_SIZE;
 	public static final byte[] EMPY = new byte[VOLUME];
-	private final ByteBuffer pixel = BufferUtils.createByteBuffer(DATA_SIZE);
+	//private final ByteBuffer pixel = BufferUtils.createByteBuffer(DATA_SIZE);
 	private final int textureID;
 	
 	public Texture3D() {
@@ -29,6 +29,7 @@ public class Texture3D {
 	}
 	
 	public Texture3D fillTexture(byte[] red, byte[] green, byte[] blue) {
+		GL20.glActiveTexture(GL20.GL_TEXTURE6);
 		initTexture();
 		ByteBuffer pixels = BufferUtils.createByteBuffer(ALLOCATE_SIZE);
 		GL20.glTexImage3D(GL20.GL_TEXTURE_3D, 0, GL20.GL_RGB8, SIDE, SIDE, SIDE, 0, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, pixels);
@@ -36,13 +37,16 @@ public class Texture3D {
 			int x = i % 18;
 			int y = (i / 18) % 18;
 			int z = i / 324;
+			ByteBuffer pixel = BufferUtils.createByteBuffer(DATA_SIZE);
 			pixel.put(red[i]);
 			pixel.put(green[i]);
 			pixel.put(blue[i]);
-			pixel.rewind();
+			//pixel.rewind();
+			pixel.flip();
 			GL20.glTexSubImage3D(GL20.GL_TEXTURE_3D, 0, x, y, z, 1, 1, 1, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, pixel);
 		}
 		GL20.glBindTexture(GL20.GL_TEXTURE_3D, 0);
+		GL20.glActiveTexture(GL20.GL_TEXTURE0);
 		return this;
 	}
 	

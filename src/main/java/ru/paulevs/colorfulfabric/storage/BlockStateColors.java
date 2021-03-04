@@ -18,6 +18,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import net.fabricmc.fabric.impl.item.group.ItemGroupExtensions;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -150,6 +151,7 @@ public class BlockStateColors {
 				return name1.compareToIgnoreCase(name2);
 			});
 			
+			((ItemGroupExtensions) ItemGroup.BUILDING_BLOCKS).fabric_expandArray();
 			new ItemGroup(ItemGroup.GROUPS.length - 1, String.format("%s.%s", "colorfulfabric", "lights")) {
 				Random random = new Random(0);
 				private long time;
