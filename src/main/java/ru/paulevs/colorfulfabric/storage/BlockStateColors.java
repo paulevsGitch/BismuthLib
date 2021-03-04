@@ -1,19 +1,29 @@
 package ru.paulevs.colorfulfabric.storage;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Property;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import ru.paulevs.colorfulfabric.mixin.SpriteAccessor;
 
@@ -24,6 +34,58 @@ public class BlockStateColors {
 	public static void load() {
 		if (load) {
 			load = false;
+			
+			Gson gson = new Gson();
+			FabricLoader.getInstance().getAllMods().forEach((mod) -> {
+				String id = mod.getMetadata().getId();
+				JsonObject json = loadJson("/data/" + id + "/color_lights.json", gson);
+				if (json != null) {
+					JsonArray array = json.getAsJsonArray("lights");
+					if (array != null) {
+						array.forEach((element) -> {
+							JsonObject obj = element.getAsJsonObject();
+							if (obj != null) {
+								String blockName = obj.get("block").getAsString();
+								JsonArray colorArray = obj.get("color").getAsJsonArray();
+								String stateString = null;
+								if (obj.has("state")) {
+									stateString = obj.get("state").getAsString();
+								}
+								
+								Block block = Registry.BLOCK.get(new Identifier(blockName));
+								if (block != null) {
+									Color color = new Color(colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt());
+									StateManager<Block, BlockState> manager = block.getStateManager();
+									if (stateString == null) {
+										manager.getStates().forEach((state) -> {
+											if (state.getLuminance() > 0) {
+												COLORS.put(state, color);
+											}
+										});
+									}
+									else {
+										BlockState blockState = block.getDefaultState();
+										String[] states = stateString.split(",");
+										for (String state: states) {
+											int separator = state.indexOf('=');
+											String name = state.substring(0, separator);
+											String value = state.substring(separator + 1);
+											Property<?> property = manager.getProperty(name);
+											if (property != null) {
+												blockState = appendProperty(blockState, property, value);
+											}
+										}
+										if (blockState.getLuminance() > 0) {
+											COLORS.put(blockState, color);
+										}
+									}
+								}
+							}
+						});
+					}
+				}
+			});
+			
 			float[] hsv = new float[3];
 			BlockRenderManager manager = MinecraftClient.getInstance().getBlockRenderManager();
 			Registry.BLOCK.forEach((block) -> {
@@ -35,41 +97,23 @@ public class BlockStateColors {
 							float s = hsv[1] * 4;
 							color = Color.getHSBColor(hsv[0], s > 1 ? 1 : s, 1);
 						}
-						addColor(state, color);
+						COLORS.put(state, color);
 					}
 				});
 			});
 		}
 	}
-	
-	public static void addVanillaLights() {
-		addColor(Blocks.GLOWSTONE, Color.YELLOW);
-		addColor(Blocks.REDSTONE_TORCH, Color.RED.darker());
-		
-		Color lightBlue = new Color(0, 128, 255);
-		addColor(Blocks.SOUL_FIRE, lightBlue);
-		addColor(Blocks.SOUL_TORCH, lightBlue);
-		addColor(Blocks.SOUL_WALL_TORCH, lightBlue);
-		addColor(Blocks.SOUL_LANTERN, lightBlue);
-		
-		addColor(Fluids.LAVA, Color.ORANGE);
-		addColor(Fluids.FLOWING_LAVA, Color.ORANGE);
+
+	private static <T extends Comparable<T>> BlockState appendProperty(BlockState state, Property<T> property, String valueString) {
+		Optional<T> optional = property.parse(valueString);
+		if (optional.isPresent()) {
+			state = (BlockState) state.with(property, optional.get());
+		}
+		return state;
 	}
 	
 	public static Color getColor(BlockState state) {
 		return COLORS.get(state);
-	}
-	
-	public static void addColor(BlockState state, Color color) {
-		COLORS.put(state, color);
-	}
-	
-	public static void addColor(Block block, Color color) {
-		block.getStateManager().getStates().forEach((state) -> addColor(state, color));
-	}
-	
-	public static void addColor(Fluid fluid, Color color) {
-		fluid.getStateManager().getStates().forEach((state) -> addColor(state.getBlockState(), color));
 	}
 	
 	private static Color getBlockColor(BlockRenderManager manager, BlockState state) {
@@ -107,5 +151,22 @@ public class BlockStateColors {
 			}
 		}
 		return count < 1 ? Color.DARK_GRAY : new Color((int) (cr / count), (int) (cg / count), (int) (cb / count));
+	}
+	
+	private static JsonObject loadJson(String path, Gson gson) {
+		try {
+			InputStream stream = BlockStateColors.class.getResourceAsStream(path);
+			if (stream != null) {
+				InputStreamReader reader = new InputStreamReader(stream);
+				JsonObject obj = gson.fromJson(reader, JsonObject.class);
+				reader.close();
+				stream.close();
+				return obj;
+			}
+		}
+		catch (JsonSyntaxException | JsonIOException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

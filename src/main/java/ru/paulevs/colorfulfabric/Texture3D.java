@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL20;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.texture.TextureUtil;
+
 public class Texture3D {
 	// Cube with 16 blocks side and 3 bytes per color
 	private static final int SIDE = 18;
@@ -17,12 +19,12 @@ public class Texture3D {
 	private final int textureID;
 	
 	public Texture3D() {
-		textureID = GL20.glGenTextures();
+		textureID = TextureUtil.generateId();
 		makeEmpty();
 	}
 	
 	public Texture3D(byte[] red, byte[] green, byte[] blue) {
-		textureID = GL20.glGenTextures();
+		textureID = TextureUtil.generateId();
 		fillTexture(red, green, blue);
 	}
 	
