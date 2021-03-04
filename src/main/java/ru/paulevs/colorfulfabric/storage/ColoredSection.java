@@ -9,14 +9,10 @@ import net.minecraft.util.math.BlockPos;
 import ru.paulevs.colorfulfabric.ColorLightManager;
 
 public class ColoredSection {
-	private static final int SIDE = 18;
-	private static final int SIDE_LONG = SIDE * SIDE;
-	protected static final int CAPACITY = SIDE * SIDE * SIDE; 
-	
 	private final Map<BlockPos, LightSourceInfo> sources = Maps.newHashMap();
-	private final byte[] red = new byte[CAPACITY];
-	private final byte[] green = new byte[CAPACITY];
-	private final byte[] blue = new byte[CAPACITY];
+	private final byte[] red = new byte[Constants.VOLUME];
+	private final byte[] green = new byte[Constants.VOLUME];
+	private final byte[] blue = new byte[Constants.VOLUME];
 	private final BlockPos pos;
 	
 	public ColoredSection(BlockPos pos) {
@@ -101,6 +97,6 @@ public class ColoredSection {
 	}
 	
 	private static int getIndex(int x, int y, int z) {
-		return (z * SIDE_LONG) + (y * SIDE) + x;
+		return z << 10 | y << 5 | x;
 	}
 }
