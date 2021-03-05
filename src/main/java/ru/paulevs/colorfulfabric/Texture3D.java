@@ -13,27 +13,22 @@ import ru.paulevs.colorfulfabric.storage.Constants;
 
 public class Texture3D {
 	private static final ByteBuffer PIXELS = BufferUtils.createByteBuffer(Constants.ALLOCATE_SIZE);
-	private static final byte[] EMPY = new byte[Constants.VOLUME];
+	private static final byte[] EMPY = new byte[Constants.ALLOCATE_SIZE];
 	private final int textureID;
 	
 	public Texture3D() {
-		this(EMPY, EMPY, EMPY);
+		this(EMPY);
 	}
 	
-	public Texture3D(byte[] red, byte[] green, byte[] blue) {
+	public Texture3D(byte[] data) {
 		textureID = TextureUtil.generateId();
-		fillTexture(red, green, blue);
+		fillTexture(data);
 	}
 	
-	public Texture3D fillTexture(byte[] red, byte[] green, byte[] blue) {
+	public Texture3D fillTexture(byte[] data) {
 		initTexture();
 		PIXELS.rewind();
-		for (int i = 0; i < Constants.VOLUME; i++) {
-			PIXELS.put(red[i]);
-			PIXELS.put(green[i]);
-			PIXELS.put(blue[i]);
-			PIXELS.put((byte) 1);
-		}
+		PIXELS.put(data);
 		PIXELS.flip();
 		GL13.glTexImage3D(GL13.GL_TEXTURE_3D, 0, GL11.GL_RGBA8, Constants.SIDE, Constants.SIDE, Constants.SIDE, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, PIXELS);
 		GL11.glBindTexture(GL13.GL_TEXTURE_3D, 0);

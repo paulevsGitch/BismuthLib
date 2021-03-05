@@ -10,9 +10,7 @@ import ru.paulevs.colorfulfabric.ColorLightManager;
 
 public class ColoredSection {
 	private final Map<BlockPos, LightSourceInfo> sources = Maps.newHashMap();
-	private final byte[] red = new byte[Constants.VOLUME];
-	private final byte[] green = new byte[Constants.VOLUME];
-	private final byte[] blue = new byte[Constants.VOLUME];
+	private final byte[] data = new byte[Constants.ALLOCATE_SIZE];
 	private final BlockPos pos;
 	
 	public ColoredSection(BlockPos pos) {
@@ -21,17 +19,17 @@ public class ColoredSection {
 	
 	public void setColor(int x, int y, int z, int r, int g, int b) {
 		int index = getIndex(x + 1, y + 1, z + 1);
-		red[index] = (byte) r;
-		green[index] = (byte) g;
-		blue[index] = (byte) b;
+		data[index] = (byte) r;
+		data[index | 1] = (byte) g;
+		data[index | 2] = (byte) b;
 		copyValues(index, x, y, z);
 	}
 	
 	public void addColor(int x, int y, int z, int r, int g, int b) {
 		int index = getIndex(x + 1, y + 1, z + 1);
-		red[index] = (byte) Math.max(r, red[index] & 255);
-		green[index] = (byte) Math.max(g, green[index] & 255);
-		blue[index] = (byte) Math.max(b, blue[index] & 255);
+		data[index] = (byte) Math.max(r, data[index] & 255);
+		data[index | 1] = (byte) Math.max(g, data[index | 1] & 255);
+		data[index | 2] = (byte) Math.max(b, data[index | 2] & 255);
 		copyValues(index, x, y, z);
 	}
 	
@@ -52,9 +50,9 @@ public class ColoredSection {
 						int ny = sy == pos.getY() ? y + 1 : y == 0 ? 17 : y == 15 ? 0 : y + 1;
 						int nz = sz == pos.getZ() ? z + 1 : z == 0 ? 17 : z == 15 ? 0 : z + 1;
 						int index2 = getIndex(nx, ny, nz);
-						section.red[index2] = red[index];
-						section.green[index2] = green[index];
-						section.blue[index2] = blue[index];
+						section.data[index2] = data[index];
+						section.data[index2 | 1] = data[index | 1];
+						section.data[index2 | 2] = data[index | 2];
 					}
 				}
 			}
@@ -62,7 +60,7 @@ public class ColoredSection {
 	}
 	
 	public LightDataStorage makeStorage() {
-		return new LightDataStorage(red, green, blue);
+		return new LightDataStorage(data);
 	}
 	
 	public BlockPos getPos() {
@@ -97,6 +95,6 @@ public class ColoredSection {
 	}
 	
 	private static int getIndex(int x, int y, int z) {
-		return z << 10 | y << 5 | x;
+		return (z << 10 | y << 5 | x) << 2;
 	}
 }
