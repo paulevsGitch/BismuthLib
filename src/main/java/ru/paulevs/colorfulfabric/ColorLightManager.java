@@ -26,7 +26,6 @@ public class ColorLightManager {
 	private static final Mutable POS = new Mutable();
 	private static Thread lightUpdater;
 	private static Texture3D empty;
-	private static boolean canPick;
 	private static boolean run;
 	
 	public static void start() {
@@ -147,18 +146,21 @@ public class ColorLightManager {
 	}
 	
 	public static Texture3D getTexture3D(BlockPos pos) {
-		if (canPick) {
-			LightDataStorage data = LIGHT_DATA.get(pos);
-			if (data != null) {
-				canPick = false;
-				LIGHT_DATA.remove(pos);
-				Texture3D tex = TEXTURES.get(pos);
+		Texture3D tex = TEXTURES.get(pos);
+		
+		LightDataStorage data = LIGHT_DATA.get(pos);
+		if (data != null) {
+			LIGHT_DATA.remove(pos);
+			if (tex == null) {
 				tex = data.makeTexture(tex);
 				TEXTURES.put(pos.toImmutable(), tex);
-				return tex;
 			}
+			else {
+				tex = data.makeTexture(tex);
+			}
+			return tex;
 		}
-		Texture3D tex = TEXTURES.get(pos);
+		
 		if (tex == null) {
 			if (empty == null) {
 				empty = new Texture3D();
@@ -166,10 +168,6 @@ public class ColorLightManager {
 			return empty;
 		}
 		return tex;
-	}
-	
-	public static void enablePick() {
-		canPick = true;
 	}
 	
 	private static void updateSections(int x, int y, int z, int radius) {

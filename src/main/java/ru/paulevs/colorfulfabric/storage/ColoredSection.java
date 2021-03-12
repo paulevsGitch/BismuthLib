@@ -97,4 +97,8 @@ public class ColoredSection {
 	private static int getIndex(int x, int y, int z) {
 		return (z << 10 | y << 5 | x) << 2;
 	}
+
+	public byte[] getData() {
+		return data;
+	}
 }
