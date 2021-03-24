@@ -18,9 +18,6 @@
 
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"ru.paulevs.colorfulfabric.ColorfulFabric"
-		],
 		"client": [
 			"ru.paulevs.colorfulfabric.ColorfulFabricClient"
 		]

@@ -1,35 +1,29 @@
 package ru.paulevs.colorfulfabric;
 
 import java.awt.Color;
-import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
+import net.minecraft.util.math.MathHelper;
 import ru.paulevs.colorfulfabric.storage.BlockStateColors;
 import ru.paulevs.colorfulfabric.storage.ColoredSection;
-import ru.paulevs.colorfulfabric.storage.LightDataStorage;
 import ru.paulevs.colorfulfabric.storage.LightSourceInfo;
 
 public class ColorLightManager {
-	private static final ConcurrentLinkedQueue<LightSourceInfo> LIGHT_QUEUE = new ConcurrentLinkedQueue<LightSourceInfo>();
-	private static final ConcurrentLinkedQueue<BlockPos> REMOVE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
-	private static final ConcurrentLinkedQueue<BlockPos> UPDATE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
-	public static final Map<BlockPos, LightDataStorage> LIGHT_DATA = Collections.synchronizedMap(Maps.newHashMap());
+	//private static final ConcurrentLinkedQueue<LightSourceInfo> LIGHT_QUEUE = new ConcurrentLinkedQueue<LightSourceInfo>();
+	//private static final ConcurrentLinkedQueue<BlockPos> REMOVE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
 	private static final Map<BlockPos, ColoredSection> SECTIONS = Maps.newHashMap();
-	private static final Map<BlockPos, Texture3D> TEXTURES = Maps.newHashMap();
 	private static final Mutable POS_BLOCK = new Mutable();
 	private static final Mutable POS = new Mutable();
-	private static Thread lightUpdater;
-	private static Texture3D empty;
-	private static boolean run;
+	//private static Thread lightUpdater;
+	//private static boolean run;
 	
 	public static void start() {
-		run = true;
+		/*run = true;
 		lightUpdater = new Thread() {
 			@Override
 			public void run() {
@@ -44,24 +38,15 @@ public class ColorLightManager {
 						BlockPos pos = info.getPos();
 						getSection(pos.getX(), pos.getY(), pos.getZ()).addLightSource(info);
 						placeFastLight(pos.getX(), pos.getY(), pos.getZ(), info.getColor());
-						updateSections(pos.getX(), pos.getY(), pos.getZ(), 2);
-					}
-					
-					BlockPos sPos = UPDATE_QUEUE.poll();
-					if (sPos != null) {
-						ColoredSection section = getSectionDirect(sPos.getX(), sPos.getY(), sPos.getZ());
-						BlockPos updatePos = new BlockPos(sPos.getX() << 4, sPos.getY() << 4, sPos.getZ() << 4);
-						LightDataStorage storage = section.makeStorage();
-						LIGHT_DATA.put(updatePos, storage);
 					}
 				}
 			}
 		};
-		lightUpdater.start();
+		lightUpdater.start();*/
 	}
 	
 	public static void stop() {
-		run = false;
+		//run = false;
 	}
 	
 	public static ColoredSection getSection(int x, int y, int z) {
@@ -87,12 +72,16 @@ public class ColorLightManager {
 	public static void addLightSource(BlockPos pos, BlockState state) {
 		Color color = BlockStateColors.getColor(state);
 		if (color != null) {
-			LIGHT_QUEUE.add(new LightSourceInfo(pos.toImmutable(), state, color));
+			//LIGHT_QUEUE.add(new LightSourceInfo(pos.toImmutable(), state, color));
+			LightSourceInfo info = new LightSourceInfo(pos.toImmutable(), state, color);
+			getSection(pos.getX(), pos.getY(), pos.getZ()).addLightSource(info);
+			placeFastLight(pos.getX(), pos.getY(), pos.getZ(), info.getColor());
 		}
 	}
 	
 	public static void removeLight(BlockPos pos) {
-		REMOVE_QUEUE.add(pos.toImmutable());
+		//REMOVE_QUEUE.add(pos.toImmutable());
+		removeLight(pos, 2);
 	}
 	
 	private static void removeLight(BlockPos pos, int radius) {
@@ -105,7 +94,7 @@ public class ColorLightManager {
 				for (int k = -radius; k <= radius; k++) {
 					int pz = pos.getZ() + k;
 					ColoredSection section = getSection(px, py, pz);
-					section.setColor(px & 15, py & 15, pz & 15, 0, 0, 0);
+					section.setColor(px & 15, py & 15, pz & 15, ColorUtil.BLACK);
 				}
 			}
 		}
@@ -128,49 +117,9 @@ public class ColorLightManager {
 				}
 			}
 		}
-		
-		x1 --;
-		y1 --;
-		z1 --;
-		x2 ++;
-		y2 ++;
-		z2 ++;
-		
-		for (int i = x1; i <= x2; i++) {
-			for (int j = y1; j <= y2; j++) {
-				for (int k = z1; k <= z2; k++) {
-					UPDATE_QUEUE.add(new BlockPos(i, j, k));
-				}
-			}
-		}
 	}
 	
-	public static Texture3D getTexture3D(BlockPos pos) {
-		Texture3D tex = TEXTURES.get(pos);
-		
-		LightDataStorage data = LIGHT_DATA.get(pos);
-		if (data != null) {
-			LIGHT_DATA.remove(pos);
-			if (tex == null) {
-				tex = data.makeTexture(tex);
-				TEXTURES.put(pos.toImmutable(), tex);
-			}
-			else {
-				tex = data.makeTexture(tex);
-			}
-			return tex;
-		}
-		
-		if (tex == null) {
-			if (empty == null) {
-				empty = new Texture3D();
-			}
-			return empty;
-		}
-		return tex;
-	}
-	
-	private static void updateSections(int x, int y, int z, int radius) {
+	/*private static void updateArea(int x, int y, int z, int radius) {
 		int x1 = (x - radius) >> 4;
 		int y1 = (y - radius) >> 4;
 		int z1 = (z - radius) >> 4;
@@ -180,17 +129,19 @@ public class ColorLightManager {
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
 				for (int k = z1; k <= z2; k++) {
-					UPDATE_QUEUE.add(new BlockPos(i, j, k));
+					
 				}
 			}
 		}
-	}
+	}*/
 	
-	private static void addColor(int x, int y, int z, int r, int g, int b) {
-		getSection(x, y, z).addColor(x & 15, y & 15, z & 15, r, g, b);
+	private static void addColor(int x, int y, int z, int color) {
+		getSection(x, y, z).addColor(x & 15, y & 15, z & 15, color);
 	}
 	
 	private static void placeFastLight(int x, int y, int z, Color color) {
+		int colorBright = color.getRGB();
+		int colorDark = ColorUtil.color(color.getRed() / 3, color.getGreen() / 3, color.getBlue() / 3);
 		for (int i = -1; i <= 1; i++) {
 			POS_BLOCK.setX(x + i);
 			for (int j = -1; j <= 1; j++) {
@@ -198,13 +149,54 @@ public class ColorLightManager {
 				for (int k = -1; k <= 1; k++) {
 					POS_BLOCK.setZ(z + k);
 					int d = Math.abs(i) + Math.abs(j) + Math.abs(k);
-					boolean isBright = d <= 1;
-					int red = isBright ? color.getRed() : color.getRed() / 3;
-					int green = isBright ? color.getGreen() : color.getGreen() / 3;
-					int blue = isBright ? color.getBlue() : color.getBlue() / 3;
-					addColor(POS_BLOCK.getX(), POS_BLOCK.getY(), POS_BLOCK.getZ(), red, green, blue);
+					addColor(POS_BLOCK.getX(), POS_BLOCK.getY(), POS_BLOCK.getZ(), d <= 1 ? colorBright : colorDark);
 				}
 			}
 		}
+	}
+	
+	private static int getColor(int x, int y, int z) {
+		ColoredSection section = getSection(x, y, z);
+		return section.getColor(x & 15, y & 15, z & 15);
+	}
+	
+	public static int getColor(double x, double y, double z) {
+		int x1 = MathHelper.floor(x - 0.5);
+		int y1 = MathHelper.floor(y - 0.5);
+		int z1 = MathHelper.floor(z - 0.5);
+		
+		int x2 = x1 + 1;
+		int y2 = y1 + 1;
+		int z2 = z1 + 1;
+		
+		float dx = (float) (x - x1) - 0.5F;
+		float dy = (float) (y - y1) - 0.5F;
+		float dz = (float) (z - z1) - 0.5F;
+		
+		int a = getColor(x1, y1, z1);
+		int b = getColor(x2, y1, z1);
+		int c = getColor(x1, y2, z1);
+		int d = getColor(x2, y2, z1);
+		int e = getColor(x1, y1, z2);
+		int f = getColor(x2, y1, z2);
+		int g = getColor(x1, y2, z2);
+		int h = getColor(x2, y2, z2);
+		
+		a = ColorUtil.lerp(a, b, dx);
+		b = ColorUtil.lerp(c, d, dx);
+		c = ColorUtil.lerp(e, f, dx);
+		d = ColorUtil.lerp(g, h, dx);
+		
+		a = ColorUtil.lerp(a, b, dy);
+		b = ColorUtil.lerp(c, d, dy);
+		
+		a = ColorUtil.lerp(a, b, dz);
+		float mix = MHelper.max(ColorUtil.getRed(a), ColorUtil.getGreen(a), ColorUtil.getBlue(a)) / 255F;
+		return ColorUtil.lerp(ColorUtil.WHITE, a, mix);
+		
+		/*int ix = MathHelper.floor(x + 0.5);
+		int iy = MathHelper.floor(y + 0.5);
+		int iz = MathHelper.floor(z + 0.5);
+		return getColor(ix, iy, iz);*/
 	}
 }

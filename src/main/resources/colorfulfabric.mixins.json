@@ -3,14 +3,12 @@
 	"minVersion": "0.8",
 	"package": "ru.paulevs.colorfulfabric.mixin",
 	"compatibilityLevel": "JAVA_8",
-	"mixins": [
-		"WorldChunkMixin"
-	],
+	"mixins": [],
 	"client": [
+		"AbstractQuadRendererMixin",
 		"BakedModelManagerMixin",
-		"MinecraftClientMixin",
-		"WorldRendererMixin",
-		"BuiltChunkMixin",
+		"BlockRenderInfoMixin",
+		"WorldChunkMixin",
 		"SpriteAccessor"
 	],
 	"injectors": {
