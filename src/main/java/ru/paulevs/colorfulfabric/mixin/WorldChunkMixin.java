@@ -41,15 +41,21 @@ public class WorldChunkMixin {
 			for (ChunkSection section: this.sections) {
 				if (section != null) {
 					START.setY(section.getYOffset());
+					//boolean updated = false;
 					for (int i = 0; i < 4096; i++) {
 						int x = i & 15;
 						int y = (i >> 4) & 15;
 						int z = i >> 8;
 						BlockState state = section.getBlockState(x, y, z);
 						if (state.getLuminance() > 0) {
+							//ColorLightManager.addLightSourceDirectly(POS.set(START).move(x, y, z), state);
 							ColorLightManager.addLightSource(POS.set(START).move(x, y, z), state);
+							//updated = true;
 						}
 					}
+					/*if (updated) {
+						ColorfulFabricClient.UPDATE.add(START.toImmutable());
+					}*/
 				}
 			}
 		}
