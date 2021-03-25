@@ -3,7 +3,7 @@ package ru.paulevs.colorfulfabric.storage;
 import java.nio.ByteBuffer;
 
 import net.minecraft.util.math.MathHelper;
-import ru.paulevs.colorfulfabric.Texture1D;
+import ru.paulevs.colorfulfabric.SectionTexture;
 
 public class LightDataStorage {
 	private final int[] data = new int[2048];
@@ -20,11 +20,10 @@ public class LightDataStorage {
 			buffer.rewind();
 			data[i] = buffer.getInt();
 		}
-		System.arraycopy(data, 0, this.data, 0, 1458);
 	}
 	
-	public Texture1D makeTexture(Texture1D src) {
-		return src == null ? new Texture1D(data) : src.fillTexture(data);
+	public SectionTexture makeTexture(SectionTexture src) {
+		return src == null ? new SectionTexture(data) : src.fillTexture(data);
 	}
 	
 	private int getScaled(byte value) {

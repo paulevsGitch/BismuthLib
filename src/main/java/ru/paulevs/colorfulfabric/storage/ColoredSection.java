@@ -30,8 +30,8 @@ public class ColoredSection {
 	public void addColor(int x, int y, int z, int r, int g, int b) {
 		int index = getIndex(x + 1, y + 1, z + 1);
 		red[index] = (byte) Math.max(r, red[index] & 255);
-		green[index] = (byte) Math.max(g, green[index | 1] & 255);
-		blue[index] = (byte) Math.max(b, blue[index | 2] & 255);
+		green[index] = (byte) Math.max(g, green[index] & 255);
+		blue[index] = (byte) Math.max(b, blue[index] & 255);
 		copyValues(index, x, y, z);
 	}
 	

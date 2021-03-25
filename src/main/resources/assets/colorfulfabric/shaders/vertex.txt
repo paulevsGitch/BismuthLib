@@ -28,8 +28,8 @@ varying out vec4 fog;
 //vec4 getColor(vec3 pos) {}
 
 void main() {
-	color = gl_Color;// * vec4(getColorI(0, 0, 0) * 0.5, 1.0);
-	pos = (gl_Vertex.xyz + vec3(1.0, 1.0, 1.0)) / 32.0;
+	color = gl_Color;
+	pos = (gl_Vertex.xyz + vec3(1.0, 1.0, 1.0)); // 32.0
 	uvAtlas = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	uvLight = (gl_TextureMatrix[2] * gl_MultiTexCoord2).xy;
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

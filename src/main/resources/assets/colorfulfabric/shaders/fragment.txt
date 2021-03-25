@@ -11,7 +11,7 @@ layout(binding = 2) uniform sampler2D lightmap;
 
 // 4 Bytes in each int; 1458 blocks
 // uniform int colorSection[32];
-layout(binding = 6) uniform sampler1D colorSection;
+layout(binding = 6) uniform sampler2D colorSection;
 
 // Section with 18 block side
 int getIndex(int x, int y, int z) {
@@ -20,20 +20,54 @@ int getIndex(int x, int y, int z) {
 
 vec3 getColorI(int x, int y, int z) {
 	int indexBig = getIndex(x, y, z);
-	int index = int(indexBig / 4);
-	int byte = indexBig - index * 4;
-	return vec3(indexBig / 100.0, index / 100.0, byte / 4.0);
-	// int value = int(texture(colorSection, index)[byte] * 255);
-	// float red = mod(int(value / 36), 6) / 5.0;
-	// float green = mod(int(value / 6), 6) / 5.0;
-	// float blue = mod(value, 6) / 5.0;
-	// return vec3(red, green, blue);
+	int index = indexBig >> 2;
+	int byte = indexBig & 3;
+	float px = (index & 31) / 31.0;
+	float py = floor(index / 32) / 63.0;
+	int value = int(texture(colorSection, vec2(px, py))[byte] * 255);
+	float red = mod(int(value / 36), 6) / 5.0;
+	float green = mod(int(value / 6), 6) / 5.0;
+	float blue = mod(value, 6) / 5.0;
+	return vec3(red, green, blue);
+}
+
+vec4 getColor(vec3 pos) {
+	int x1 = int(pos.x);
+	int y1 = int(pos.y);
+	int z1 = int(pos.z);
+	
+	int x2 = x1 + 1;
+	int y2 = y1 + 1;
+	int z2 = z1 + 1;
+	
+	float dx = pos.x - x1;
+	float dy = pos.y - y1;
+	float dz = pos.z - z1;
+	
+	vec3 a = getColorI(x1, y1, z1);
+	vec3 b = getColorI(x2, y1, z1);
+	vec3 c = getColorI(x1, y2, z1);
+	vec3 d = getColorI(x2, y2, z1);
+	vec3 e = getColorI(x1, y1, z2);
+	vec3 f = getColorI(x2, y1, z2);
+	vec3 g = getColorI(x1, y2, z2);
+	vec3 h = getColorI(x2, y2, z2);
+	
+	a = mix(a, b, dx);
+	b = mix(c, d, dx);
+	c = mix(e, f, dx);
+	d = mix(g, h, dx);
+	
+	a = mix(a, b, dy);
+	b = mix(c, d, dy);
+	
+	return vec4(mix(a, b, dz), 1.0);
 }
 
 void main() {
 	vec4 text = texture(atlas, uvAtlas);
 	vec4 light = vec4(texture(lightmap, uvLight).rgb, 1);
-	vec4 colorLight = vec4(getColorI(int(pos.x), int(pos.y), int(pos.z)), 1.0);//vec4(texture(blocklight, pos).rgb, 1.0);
+	vec4 colorLight = getColor(pos);//vec4(texture(blocklight, pos).rgb, 1.0);
 	vec4 mixed = color * text;
 	vec4 result = mixed * light * (colorLight + vec4(1.0));
 	result = mix(result, fog, fog.a);
