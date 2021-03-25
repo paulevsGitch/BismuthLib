@@ -21,11 +21,11 @@ public class ColorLightManager {
 	private static final ConcurrentLinkedQueue<BlockPos> UPDATE_QUEUE = new ConcurrentLinkedQueue<BlockPos>();
 	public static final Map<BlockPos, LightDataStorage> LIGHT_DATA = Collections.synchronizedMap(Maps.newHashMap());
 	private static final Map<BlockPos, ColoredSection> SECTIONS = Maps.newHashMap();
-	private static final Map<BlockPos, Texture3D> TEXTURES = Maps.newHashMap();
+	private static final Map<BlockPos, Texture1D> TEXTURES = Maps.newHashMap();
 	private static final Mutable POS_BLOCK = new Mutable();
 	private static final Mutable POS = new Mutable();
 	private static Thread lightUpdater;
-	private static Texture3D empty;
+	private static Texture1D empty;
 	private static boolean run;
 	
 	public static void start() {
@@ -145,8 +145,8 @@ public class ColorLightManager {
 		}
 	}
 	
-	public static Texture3D getTexture3D(BlockPos pos) {
-		Texture3D tex = TEXTURES.get(pos);
+	public static Texture1D getTexture1D(BlockPos pos) {
+		Texture1D tex = TEXTURES.get(pos);
 		
 		LightDataStorage data = LIGHT_DATA.get(pos);
 		if (data != null) {
@@ -163,7 +163,7 @@ public class ColorLightManager {
 		
 		if (tex == null) {
 			if (empty == null) {
-				empty = new Texture3D();
+				empty = new Texture1D();
 			}
 			return empty;
 		}

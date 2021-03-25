@@ -27,7 +27,7 @@ public class BuiltChunkMixin {
 	@Inject(method = "getBuffer", at = @At("TAIL"))
 	private void cf_getBuffer(RenderLayer layer, CallbackInfoReturnable<VertexBuffer> info) {
 		if (!needsRebuild && RenderSystem.isOnRenderThread()) {
-			ColorLightManager.getTexture3D(getOrigin()).bind();
+			ColorLightManager.getTexture1D(getOrigin()).bind();
 		}
 	}
 }
