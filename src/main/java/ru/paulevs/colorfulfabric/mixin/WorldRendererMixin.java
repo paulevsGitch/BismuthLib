@@ -15,6 +15,7 @@ public class WorldRendererMixin {
 	@Inject(method = "renderLayer", at = @At("HEAD"), cancellable = true)
 	private void fl_renderLayerStart(RenderLayer renderLayer, MatrixStack matrixStack, double d, double e, double f, CallbackInfo info) {
 		ShaderUtil.useProgram();
+		//ShaderUtil.bindLightmap();
 	}
 	
 	@Inject(method = "renderLayer", at = @At("TAIL"))

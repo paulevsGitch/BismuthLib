@@ -13,6 +13,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.chunk.ChunkBuilder.BuiltChunk;
 import net.minecraft.util.math.BlockPos;
 import ru.paulevs.colorfulfabric.ColorLightManager;
+import ru.paulevs.colorfulfabric.ShaderUtil;
 
 @Mixin(BuiltChunk.class)
 public class BuiltChunkMixin {
@@ -27,7 +28,8 @@ public class BuiltChunkMixin {
 	@Inject(method = "getBuffer", at = @At("TAIL"))
 	private void cf_getBuffer(RenderLayer layer, CallbackInfoReturnable<VertexBuffer> info) {
 		if (!needsRebuild && RenderSystem.isOnRenderThread()) {
-			ColorLightManager.getSectionTexture(getOrigin()).bind();
+			ShaderUtil.bindLightmap();
+			ColorLightManager.getSectionTexture(getOrigin()).bind6();
 		}
 	}
 }

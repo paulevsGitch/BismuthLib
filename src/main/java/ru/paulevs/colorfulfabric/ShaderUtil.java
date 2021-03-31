@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 
 import org.lwjgl.opengl.GL20;
 
+import net.minecraft.client.texture.NativeImage;
+
 public class ShaderUtil {
+	private static Texture2D lightmap;
 	private static int program;
 	
 	private static int makeProgram(int... shaders) {
@@ -40,6 +43,10 @@ public class ShaderUtil {
 		GL20.glUseProgram(0);
 	}
 	
+	public static void bindLightmap() {
+		lightmap.bind7();
+	}
+	
 	private static String loadText(String path) {
 		String line;
 		StringBuilder result = new StringBuilder();
@@ -69,8 +76,18 @@ public class ShaderUtil {
 		int vertex = makeShader(GL20.GL_VERTEX_SHADER, vertexShader);
 		int fragment = makeShader(GL20.GL_FRAGMENT_SHADER, fragmentShader);
 		program = makeProgram(vertex, fragment);
-		//GL20.glUniform1i(GL20.glGetUniformLocation(program, "colorSection"), 6);
-		System.out.println(GL20.glGetUniformLocation(program, "colorSection"));
 		unuseProgram();
+		InputStream stream = ShaderUtil.class.getResourceAsStream("/assets/colorfulfabric/textures/lightmap/colors.png");
+		NativeImage map = null;
+		try {
+			map = NativeImage.read(stream);
+			stream.close();
+			lightmap = new Texture2D(map);
+			map.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			lightmap = new Texture2D();
+		}
 	}
 }

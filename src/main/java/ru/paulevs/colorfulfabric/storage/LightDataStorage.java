@@ -2,31 +2,28 @@ package ru.paulevs.colorfulfabric.storage;
 
 import java.nio.ByteBuffer;
 
-import net.minecraft.util.math.MathHelper;
-import ru.paulevs.colorfulfabric.SectionTexture;
+import ru.paulevs.colorfulfabric.Texture2D;
 
 public class LightDataStorage {
 	private final int[] data = new int[2048];
-	private final ByteBuffer buffer = ByteBuffer.allocateDirect(4);
+	private final ByteBuffer datab = ByteBuffer.allocate(5832);
 	
 	public LightDataStorage(byte[] red, byte[] green, byte[] blue) {
+		datab.rewind();
+		for (int i = 0; i < red.length; i++) {
+			datab.put(getIndex(red[i], green[i], blue[i]));
+		}
+		datab.rewind();
 		for (int i = 0; i < 1458; i++) {
-			buffer.rewind();
-			for (int j = 0; j < 4; j++) {
-				int index = (i << 2) | j;
-				byte merged = (byte) (getScaled(red[index]) * 36 + getScaled(green[index]) * 6 + getScaled(blue[index]));
-				buffer.put(merged);
-			}
-			buffer.rewind();
-			data[i] = buffer.getInt();
+			data[i] = datab.getInt();
 		}
 	}
 	
-	public SectionTexture makeTexture(SectionTexture src) {
-		return src == null ? new SectionTexture(data) : src.fillTexture(data);
+	public Texture2D makeTexture(Texture2D src) {
+		return src == null ? new Texture2D(data, data.length) : src.fillTexture(data, data.length);
 	}
 	
-	private int getScaled(byte value) {
-		return MathHelper.floor(value / 255F * 6F);
+	private byte getIndex(int r, int g, int b) {
+		return (byte) (r > 0 || g > 0 || b > 0 ? 255 : 0);
 	}
 }
