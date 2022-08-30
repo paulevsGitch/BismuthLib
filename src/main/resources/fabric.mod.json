@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "colorfulfabric",
+	"version": "${version}",
+	
+	"name": "Example Mod",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"paulevs"
+	],
+	"contact": {
+		"homepage": "https://github.com/paulevsGitch/ColorfulFabric",
+		"sources": "https://github.com/paulevsGitch/ColorfulFabric"
+	},
+	
+	"license": "MIT",
+	"icon": "assets/colorfulfabric/icon.png",
+	
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"ru.paulevs.colorfulfabric.ColorfulFabricClient"
+		]
+	},
+	"mixins": [
+		"colorfulfabric.mixins.json"
+	],
+	
+	"depends": {
+		"fabricloader": ">=0.14.6",
+		"fabric": "*",
+		"minecraft": "~1.19",
+		"java": ">=17"
+	}
+}

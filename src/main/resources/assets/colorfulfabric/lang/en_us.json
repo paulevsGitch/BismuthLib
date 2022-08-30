@@ -1,0 +1,20 @@
+{
+	"colorfulfabric.options.settings": "Colorful Fabric",
+	"colorfulfabric.options.settings.title": "Colorful Fabric Settings",
+	"colorfulfabric.options.mapRadiusXZ": "XZ Radius",
+	"colorfulfabric.options.mapRadiusY": "Y Radius",
+	"colorfulfabric.options.mapRadiusY.3": "3 (Fast)",
+	"colorfulfabric.options.mapRadiusY.5": "5 (Normal)",
+	"colorfulfabric.options.mapRadiusY.7": "7 (High)",
+	"colorfulfabric.options.mapRadiusY.9": "9 (Very High)",
+	"colorfulfabric.options.mapRadiusY.11": "11 (Extreme)",
+	"colorfulfabric.options.mapRadiusY.13": "13 (Showoff)",
+	"colorfulfabric.options.mapRadiusY.15": "15 (Maximum)",
+	"colorfulfabric.options.lightType": "Light Type",
+	"colorfulfabric.options.fastLight.true": "Fast",
+	"colorfulfabric.options.fastLight.false": "Fancy",
+	"colorfulfabric.options.threads": "Threads",
+	"colorfulfabric.options.modifyColor": "Modify Light",
+	"colorfulfabric.options.modifyColor.true": "Enabled",
+	"colorfulfabric.options.modifyColor.false": "Disabled"
+}
