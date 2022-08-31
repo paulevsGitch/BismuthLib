@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,12 +16,14 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.resources.model.BakedModel;
@@ -37,7 +40,8 @@ import net.minecraft.world.level.block.state.properties.Property;
 import ru.paulevs.colorfulfabric.commands.PrintCommand;
 import ru.paulevs.colorfulfabric.data.BlockLights;
 import ru.paulevs.colorfulfabric.data.LevelShaderData;
-import ru.paulevs.colorfulfabric.data.LightInfo;
+import ru.paulevs.colorfulfabric.data.info.ProviderLight;
+import ru.paulevs.colorfulfabric.data.info.SimpleLight;
 import ru.paulevs.colorfulfabric.gui.CFOptions;
 import ru.paulevs.colorfulfabric.mixin.TextureAtlasSpriteAccessor;
 
@@ -125,6 +129,8 @@ public class ColorfulFabricClient implements ClientModInitializer {
 				);
 				
 				BlockLights.clear();
+				Map<BlockState, Integer> colorMap = new HashMap<>();
+				Map<BlockState, Integer> radiusMap = new HashMap<>();
 				list.forEach((id, resource) -> {
 					JsonObject obj = new JsonObject();
 					
@@ -143,59 +149,60 @@ public class ColorfulFabricClient implements ClientModInitializer {
 						Optional<Block> optional = Registry.BLOCK.getOptional(blockID);
 						if (optional.isPresent()) {
 							Block block = optional.get();
+							ImmutableList<BlockState> blockStates = block.getStateDefinition().getPossibleStates();
 							exclude.add(block);
+							
 							
 							JsonObject data = storage.getAsJsonObject(key);
 							if (data.keySet().isEmpty()) {
 								BlockLights.addLight(block, null);
 							}
 							else {
-								int color = Integer.parseInt(data.get("color").getAsString(), 16);
-								JsonElement preRadius = data.get("radius");
-								if (preRadius.isJsonPrimitive()) {
-									int radius = preRadius.getAsInt();
-									BlockLights.addLight(block, new LightInfo(color, radius));
+								radiusMap.clear();
+								colorMap.clear();
+								BlockColor provider = null;
+								
+								JsonElement element = data.get("color");
+								if (element.isJsonPrimitive()) {
+									String preValue = element.getAsString();
+									if (preValue.equals("provider")) {
+										provider = ColorProviderRegistry.BLOCK.get(block);
+									}
+									else {
+										int value = Integer.parseInt(preValue, 16);
+										blockStates.forEach(state -> colorMap.put(state, value));
+									}
 								}
 								else {
-									data = preRadius.getAsJsonObject();
-									String type = data.get("type").getAsString();
-									ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
-									
-									if (type.equals("property")) {
-										final JsonObject values = data.getAsJsonObject("values");
-										values.keySet().forEach(k -> {
-											int radius = values.get(k).getAsInt();
-											String[] pair = k.split("=");
-											states.forEach(state -> {
-												if (hasPropertyWithValue(state, pair[0], pair[1])) {
-													BlockLights.addLight(state, new LightInfo(color, radius));
-												}
-											});
-										});
-									}
-									else if (type.equals("state")) {
-										final JsonObject values = data.getAsJsonObject("values");
-										values.keySet().forEach(stateString -> {
-											int radius = values.get(stateString).getAsInt();
-											Map<String, String> propValues = new HashMap<>();
-											Arrays.stream(stateString.split(",")).forEach(entry -> {
-												String[] pair = entry.split("=");
-												propValues.put(pair[0], pair[1]);
-											});
-											states.forEach(state -> {
-												AtomicBoolean add = new AtomicBoolean(true);
-												propValues.forEach((name, val) -> {
-													if (!hasPropertyWithValue(state, name, val)) {
-														add.set(false);
-													}
-												});
-												if (add.get()) {
-													BlockLights.addLight(state, new LightInfo(color, radius));
-												}
-											});
-										});
-									}
+									getValues(block, element.getAsJsonObject()).forEach((state, primitive) -> {
+										int value = Integer.parseInt(primitive.getAsString(), 16);
+										colorMap.put(state, value);
+									});
 								}
+								
+								element = data.get("radius");
+								if (element.isJsonPrimitive()) {
+									int value = element.getAsInt();
+									blockStates.forEach(state -> radiusMap.put(state, value));
+								}
+								else {
+									Map<BlockState, JsonPrimitive> values = getValues(block, element.getAsJsonObject());
+									values.forEach((state, primitive) -> radiusMap.put(state, primitive.getAsInt()));
+								}
+								
+								final BlockColor colorCopy = provider;
+								blockStates.forEach(state -> {
+									if (radiusMap.containsKey(state)) {
+										int radius = radiusMap.get(state);
+										if (colorCopy != null) {
+											BlockLights.addLight(state, new ProviderLight(state, colorCopy, radius));
+										}
+										else if (colorMap.containsKey(state)) {
+											int color = colorMap.get(state);
+											BlockLights.addLight(state, new SimpleLight(color, radius));
+										}
+									}
+								});
 							}
 						}
 					});
@@ -203,14 +210,38 @@ public class ColorfulFabricClient implements ClientModInitializer {
 				
 				Registry.BLOCK.stream().filter(block -> !exclude.contains(block)).forEach(block -> {
 					block.getStateDefinition().getPossibleStates().stream().filter(state -> state.getLightEmission() > 0).forEach(state -> {
-						System.out.println(state);
 						int color = getBlockColor(state);
 						int radius = state.getLightEmission();
-						BlockLights.addLight(state, new LightInfo(color, radius));
+						BlockLights.addLight(state, new SimpleLight(color, radius));
 					});
 				});
 			}
 		});
+	}
+	
+	private Map<BlockState, JsonPrimitive> getValues(Block block, final JsonObject values) {
+		ImmutableList<BlockState> states = block.getStateDefinition().getPossibleStates();
+		Map<BlockState, JsonPrimitive> result = new HashMap<>();
+		values.keySet().forEach(stateString -> {
+			JsonPrimitive value = values.get(stateString).getAsJsonPrimitive();
+			Map<String, String> propValues = new HashMap<>();
+			Arrays.stream(stateString.split(",")).forEach(entry -> {
+				String[] pair = entry.split("=");
+				propValues.put(pair[0], pair[1]);
+			});
+			states.forEach(state -> {
+				AtomicBoolean add = new AtomicBoolean(true);
+				propValues.forEach((name, val) -> {
+					if (!hasPropertyWithValue(state, name, val)) {
+						add.set(false);
+					}
+				});
+				if (add.get()) {
+					result.put(state, value);
+				}
+			});
+		});
+		return result;
 	}
 	
 	private boolean hasPropertyWithValue(BlockState state, String propertyName, String propertyValue) {

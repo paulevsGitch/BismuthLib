@@ -2,11 +2,9 @@ package ru.paulevs.colorfulfabric.data;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import ru.paulevs.colorfulfabric.data.info.LightInfo;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BlockLights {
@@ -54,7 +52,7 @@ public class BlockLights {
 		return b << 16 | g << 8 | r;
 	}
 	
-	public static List<String> lightsAsText() {
+	/*public static List<String> lightsAsText() {
 		List<String> result = new ArrayList<>(LIGHTS.size());
 		LIGHTS.forEach((state, light) -> {
 			int bgr = light.getSimple((byte) 0);
@@ -69,5 +67,5 @@ public class BlockLights {
 		});
 		Collections.sort(result);
 		return result;
-	}
+	}*/
 }

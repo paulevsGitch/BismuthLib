@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import ru.paulevs.colorfulfabric.data.BlockLights;
-import ru.paulevs.colorfulfabric.data.LightInfo;
+import ru.paulevs.colorfulfabric.data.info.LightInfo;
 import ru.paulevs.colorfulfabric.gui.CFOptions;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class LightPropagator {
 					LightInfo light = BlockLights.getLight(state);
 					
 					if (light != null) {
-						data[index] = light.getSimple((byte) 0) | ALPHA;
+						data[index] = light.getSimple(level, pos, (byte) 0) | ALPHA;
 						continue;
 					}
 					
@@ -74,7 +74,7 @@ public class LightPropagator {
 						state = level.getBlockState(pos2);
 						light = BlockLights.getLight(state);
 						if (light != null) {
-							data[index] = maxBlend(data[index], light.getSimple(i)) | ALPHA;
+							data[index] = maxBlend(data[index], light.getSimple(level, pos, i)) | ALPHA;
 						}
 					}
 				}
@@ -123,7 +123,7 @@ public class LightPropagator {
 		}
 	}
 	
-	private void fastFillLight(int[] data, BlockPos pos, LightInfo info, BlockPos secMin, BlockPos secMax) {
+	private void fastFillLight(Level level, int[] data, BlockPos pos, LightInfo info, BlockPos secMin, BlockPos secMax) {
 		int radius = info.getRadius();
 		MutableBlockPos p = new MutableBlockPos();
 		for (int i = -radius; i <= radius; i++) {
@@ -134,7 +134,7 @@ public class LightPropagator {
 					p.setZ(pos.getZ() + k);
 					int dist = Math.abs(i) + Math.abs(j) + Math.abs(k);
 					if (dist >= radius) continue;
-					setLight(data, p, info.getAdvanced((byte) dist), secMin, secMax, true);
+					setLight(data, p, info.getAdvanced(level, pos, (byte) dist), secMin, secMax, true);
 				}
 			}
 		}
@@ -147,7 +147,7 @@ public class LightPropagator {
 		if (modify) Arrays.fill(multipliers, WHITE);
 		mask[getMaskIndex(MASK_OFFSET, MASK_OFFSET, MASK_OFFSET)] = true;
 		
-		int color = info.getAdvanced((byte) 0);
+		int color = info.getAdvanced(level, pos, (byte) 0);
 		setLight(data, pos, color, secMin, secMax, true);
 		
 		buffers.get(0).add(pos);
@@ -163,7 +163,7 @@ public class LightPropagator {
 			Set<BlockPos> starts = buffers.get(bufferIndex);
 			bufferIndex = (byte) ((bufferIndex + 1) & 1);
 			Set<BlockPos> ends = buffers.get(bufferIndex);
-			color = info.getAdvanced(i);
+			color = info.getAdvanced(level, pos, i);
 			
 			for (BlockPos start: starts) {
 				for (Direction offset: DIRECTIONS) {

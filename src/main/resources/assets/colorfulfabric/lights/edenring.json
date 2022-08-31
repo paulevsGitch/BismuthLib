@@ -36,24 +36,21 @@
 	"edenring:gravity_compressor": {
 		"color": "71dbfa",
 		"radius": {
-			"type": "property",
-			"values": {
-				"level=1": 1,
-				"level=2": 2,
-				"level=3": 3,
-				"level=4": 4,
-				"level=5": 5,
-				"level=6": 6,
-				"level=7": 7,
-				"level=8": 8,
-				"level=9": 9,
-				"level=10": 10,
-				"level=11": 11,
-				"level=12": 12,
-				"level=13": 13,
-				"level=14": 14,
-				"level=15": 15
-			}
+			"level=1": 1,
+			"level=2": 2,
+			"level=3": 3,
+			"level=4": 4,
+			"level=5": 5,
+			"level=6": 6,
+			"level=7": 7,
+			"level=8": 8,
+			"level=9": 9,
+			"level=10": 10,
+			"level=11": 11,
+			"level=12": 12,
+			"level=13": 13,
+			"level=14": 14,
+			"level=15": 15
 		}
 	},
 	
