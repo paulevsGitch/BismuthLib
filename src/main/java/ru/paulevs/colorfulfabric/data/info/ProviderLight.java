@@ -9,21 +9,23 @@ public class ProviderLight extends LightInfo {
 	private final BlockState state;
 	private final BlockColor color;
 	private final int radius;
+	private final int index;
 	
-	public ProviderLight(BlockState state, BlockColor color, int radius) {
+	public ProviderLight(BlockState state, BlockColor color, int index, int radius) {
 		this.radius = radius;
 		this.state = state;
 		this.color = color;
+		this.index = index;
 	}
 	
 	@Override
 	public int getSimple(Level level, BlockPos pos, byte i) {
-		return color.getColor(state, level, pos, 0);
+		return color.getColor(state, level, pos, index);
 	}
 	
 	@Override
 	public int getAdvanced(Level level, BlockPos pos, byte i) {
-		return color.getColor(state, level, pos, 0);
+		return color.getColor(state, level, pos, index);
 	}
 	
 	@Override

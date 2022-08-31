@@ -41,7 +41,7 @@ in other json files if they will be loaded after file with values that you want 
 
 **Color** can be:
 - String color representation (examples: "ffffff" = white, "ff0000" = red);
-- "provider" - this will use block color provider (block color in mojmap) to colorize block.
+- "provider=<index>" - this will use block color provider (block color in mojmap) to colorize block. Index is a layer index (for most blocks it is zero)
 - Jsom Object - this will be used as a state map, example:
 ```json
 "color": {
@@ -67,6 +67,8 @@ to states that have both radius and color.
 <br/>
 
 ### Examples
+[**Vanilla Blocks Example**](https://github.com/paulevsGitch/ColorfulFabric/blob/main/src/main/resources/assets/colorfulfabric/lights/minecraft.json)
+
 #### Simple light
 Will just add color to block (to all states of block)
 ```json
@@ -102,10 +104,13 @@ Example for different radius values:
 Provider light:
 ```json
 "minecraft:oak_leaves": {
-	"color": "provider",
+	"color": "provider=0",
 	"radius": 3
 }
 ```
+Value after = is provider index. For most bloks it is zero, but some blocks can have more than
+one index layer.
+
 States light:
 ```json
 "minecraft:black_candle": {

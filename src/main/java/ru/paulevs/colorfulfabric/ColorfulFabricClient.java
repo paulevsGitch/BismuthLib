@@ -161,12 +161,14 @@ public class ColorfulFabricClient implements ClientModInitializer {
 								radiusMap.clear();
 								colorMap.clear();
 								BlockColor provider = null;
+								int providerIndex = 0;
 								
 								JsonElement element = data.get("color");
 								if (element.isJsonPrimitive()) {
 									String preValue = element.getAsString();
-									if (preValue.equals("provider")) {
+									if (preValue.startsWith("provider")) {
 										provider = ColorProviderRegistry.BLOCK.get(block);
+										providerIndex = Integer.parseInt(preValue.substring(preValue.indexOf('=') + 1));
 									}
 									else {
 										int value = Integer.parseInt(preValue, 16);
@@ -190,12 +192,13 @@ public class ColorfulFabricClient implements ClientModInitializer {
 									values.forEach((state, primitive) -> radiusMap.put(state, primitive.getAsInt()));
 								}
 								
+								final int indexCopy = providerIndex;
 								final BlockColor colorCopy = provider;
 								blockStates.forEach(state -> {
 									if (radiusMap.containsKey(state)) {
 										int radius = radiusMap.get(state);
 										if (colorCopy != null) {
-											BlockLights.addLight(state, new ProviderLight(state, colorCopy, radius));
+											BlockLights.addLight(state, new ProviderLight(state, colorCopy, indexCopy, radius));
 										}
 										else if (colorMap.containsKey(state)) {
 											int color = colorMap.get(state);
