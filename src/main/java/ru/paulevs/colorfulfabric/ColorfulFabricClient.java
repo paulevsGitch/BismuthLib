@@ -113,7 +113,7 @@ public class ColorfulFabricClient implements ClientModInitializer {
 				});
 				
 				Map<ResourceLocation, Resource> list = resourceManager.listResources("lights", resourceLocation ->
-					resourceLocation.getPath().endsWith(".json")
+					resourceLocation.getPath().endsWith(".json") && resourceLocation.getNamespace().equals(MOD_ID)
 				);
 				list.forEach((id, resource) -> {
 					JsonObject obj = new JsonObject();
