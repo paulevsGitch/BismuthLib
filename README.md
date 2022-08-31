@@ -1,11 +1,13 @@
 # ColorfulFabric
-A simple client-side colored light mod/library for Fabric
+A simple client-side colored light mod/library for Fabric.
+Can load information about block light colors from resourcepacks
+and calculate color for blocks that don't have json-specified colors.
 
 <br/>
 
 ### How to add light to blocks:
 ColorfulFabric use resourcepacks to add color light to blocks. You can add custom
-blocks from both mod reousrces and simple resourcepack.
+blocks from both mod resources and simple resourcepack.
 
 To add blocks you need to use this resource path:
 ```
@@ -34,6 +36,9 @@ Internal json structure should look like this:
 Both "color" and "radius" tags are required.
 If there are no any tags ("block_id_3" in example above) light will be *removed* from that block.
 
+Json files can override each other if they have same name. You can also override values
+in other json files if they will be loaded after file with values that you want to override.
+
 **Color** can be:
 - String color representation (examples: "ffffff" = white, "ff0000" = red);
 - "provider" - this will use block color provider (block color in mojmap) to colorize block.
@@ -58,6 +63,8 @@ and you don't want to add all variation.
 
 You can combine state maps for both color and radius, in that case light will be added
 to states that have both radius and color.
+
+<br/>
 
 ### Examples
 #### Simple light
