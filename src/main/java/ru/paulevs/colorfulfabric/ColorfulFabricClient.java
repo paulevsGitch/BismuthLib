@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.resources.model.BakedModel;
@@ -152,7 +153,6 @@ public class ColorfulFabricClient implements ClientModInitializer {
 							ImmutableList<BlockState> blockStates = block.getStateDefinition().getPossibleStates();
 							exclude.add(block);
 							
-							
 							JsonObject data = storage.getAsJsonObject(key);
 							if (data.keySet().isEmpty()) {
 								BlockLights.addLight(block, null);
@@ -164,6 +164,7 @@ public class ColorfulFabricClient implements ClientModInitializer {
 								int providerIndex = 0;
 								
 								JsonElement element = data.get("color");
+								if (element == null) throw new RuntimeException("Block " + blockID + " in " + id + " missing color element!");
 								if (element.isJsonPrimitive()) {
 									String preValue = element.getAsString();
 									if (preValue.startsWith("provider")) {
@@ -183,6 +184,7 @@ public class ColorfulFabricClient implements ClientModInitializer {
 								}
 								
 								element = data.get("radius");
+								if (element == null) throw new RuntimeException("Block " + blockID + " in " + id + " missing radius element!");
 								if (element.isJsonPrimitive()) {
 									int value = element.getAsInt();
 									blockStates.forEach(state -> radiusMap.put(state, value));
@@ -316,6 +318,14 @@ public class ColorfulFabricClient implements ClientModInitializer {
 		uniform = shader.getUniform("fastLight");
 		if (uniform != null) {
 			uniform.set(fastLight ? 1 : 0);
+		}
+		
+		ClientLevel level = Minecraft.getInstance().level;
+		if (level != null) {
+			uniform = shader.getUniform("timeOfDay");
+			if (uniform != null) {
+				uniform.set(level.getTimeOfDay(0));
+			}
 		}
 	}
 	

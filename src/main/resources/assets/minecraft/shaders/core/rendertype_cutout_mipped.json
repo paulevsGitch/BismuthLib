@@ -30,6 +30,7 @@
 		{ "name": "playerSectionPos", "type": "int", "count": 3, "values": [ 0, 0, 0 ] },
 		{ "name": "dataScale", "type": "int", "count": 2, "values": [ 0, 0 ] },
 		{ "name": "dataSide", "type": "int", "count": 1, "values": [ 0 ] },
-		{ "name": "fastLight", "type": "int", "count": 1, "values": [ 0 ] }
+		{ "name": "fastLight", "type": "int", "count": 1, "values": [ 0 ] },
+		{ "name": "timeOfDay", "type": "float", "count": 1, "values": [ 0.0 ] }
     ]
 }
