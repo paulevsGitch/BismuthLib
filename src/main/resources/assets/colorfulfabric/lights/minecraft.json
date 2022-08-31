@@ -103,6 +103,10 @@
 		"color": "ff0000",
 		"radius": 7
 	},
+	"minecraft:redstone_block": {
+		"color": "ff0000",
+		"radius": 5
+	},
 	"minecraft:sea_lantern": {
 		"color": "e4ebe5",
 		"radius": 15
@@ -180,6 +184,29 @@
 				"level=13": 13,
 				"level=14": 14,
 				"level=15": 15
+			}
+		}
+	},
+	"minecraft:redstone_wire": {
+		"color": "ff0000",
+		"radius": {
+			"type": "property",
+			"values": {
+				"power=1": 1,
+				"power=2": 1,
+				"power=3": 1,
+				"power=4": 1,
+				"power=5": 1,
+				"power=6": 1,
+				"power=7": 1,
+				"power=8": 1,
+				"power=9": 1,
+				"power=10": 1,
+				"power=11": 1,
+				"power=12": 1,
+				"power=13": 1,
+				"power=14": 1,
+				"power=15": 1
 			}
 		}
 	},

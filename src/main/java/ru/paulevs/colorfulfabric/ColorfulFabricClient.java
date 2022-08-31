@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -22,6 +23,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -37,14 +39,18 @@ import ru.paulevs.colorfulfabric.data.BlockLights;
 import ru.paulevs.colorfulfabric.data.LevelShaderData;
 import ru.paulevs.colorfulfabric.data.LightInfo;
 import ru.paulevs.colorfulfabric.gui.CFOptions;
+import ru.paulevs.colorfulfabric.mixin.TextureAtlasSpriteAccessor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ColorfulFabricClient implements ClientModInitializer {
@@ -100,7 +106,7 @@ public class ColorfulFabricClient implements ClientModInitializer {
 			
 			@Override
 			public void onResourceManagerReload(ResourceManager resourceManager) {
-				LightInfo[] white = new LightInfo[15];
+				/*LightInfo[] white = new LightInfo[15];
 				for (byte i = 0; i < 15; i++) {
 					int c = (i + 1) << 4;
 					white[i] = new LightInfo(c << 16 | c << 8 | c, i + 1);
@@ -110,11 +116,15 @@ public class ColorfulFabricClient implements ClientModInitializer {
 					block.getStateDefinition().getPossibleStates().stream().filter(state -> state.getLightEmission() > 0).forEach(state -> {
 						BlockLights.addLight(state, white[state.getLightEmission() - 1]);
 					});
-				});
+				});*/
+				
+				Set<Block> exclude = new HashSet<>();
 				
 				Map<ResourceLocation, Resource> list = resourceManager.listResources("lights", resourceLocation ->
 					resourceLocation.getPath().endsWith(".json") && resourceLocation.getNamespace().equals(MOD_ID)
 				);
+				
+				BlockLights.clear();
 				list.forEach((id, resource) -> {
 					JsonObject obj = new JsonObject();
 					
@@ -130,8 +140,11 @@ public class ColorfulFabricClient implements ClientModInitializer {
 					final JsonObject storage = obj;
 					storage.keySet().forEach(key -> {
 						ResourceLocation blockID = new ResourceLocation(key);
-						Block block = Registry.BLOCK.get(blockID);
-						if (block != null) {
+						Optional<Block> optional = Registry.BLOCK.getOptional(blockID);
+						if (optional.isPresent()) {
+							Block block = optional.get();
+							exclude.add(block);
+							
 							JsonObject data = storage.getAsJsonObject(key);
 							if (data.keySet().isEmpty()) {
 								BlockLights.addLight(block, null);
@@ -154,7 +167,6 @@ public class ColorfulFabricClient implements ClientModInitializer {
 											int radius = values.get(k).getAsInt();
 											String[] pair = k.split("=");
 											states.forEach(state -> {
-												BlockLights.addLight(state, null);
 												if (hasPropertyWithValue(state, pair[0], pair[1])) {
 													BlockLights.addLight(state, new LightInfo(color, radius));
 												}
@@ -171,7 +183,6 @@ public class ColorfulFabricClient implements ClientModInitializer {
 												propValues.put(pair[0], pair[1]);
 											});
 											states.forEach(state -> {
-												BlockLights.addLight(state, null);
 												AtomicBoolean add = new AtomicBoolean(true);
 												propValues.forEach((name, val) -> {
 													if (!hasPropertyWithValue(state, name, val)) {
@@ -187,6 +198,15 @@ public class ColorfulFabricClient implements ClientModInitializer {
 								}
 							}
 						}
+					});
+				});
+				
+				Registry.BLOCK.stream().filter(block -> !exclude.contains(block)).forEach(block -> {
+					block.getStateDefinition().getPossibleStates().stream().filter(state -> state.getLightEmission() > 0).forEach(state -> {
+						System.out.println(state);
+						int color = getBlockColor(state);
+						int radius = state.getLightEmission();
+						BlockLights.addLight(state, new LightInfo(color, radius));
 					});
 				});
 			}
@@ -263,5 +283,45 @@ public class ColorfulFabricClient implements ClientModInitializer {
 		if (uniform != null) {
 			uniform.set(fastLight ? 1 : 0);
 		}
+	}
+	
+	private static int getBlockColor(BlockState state) {
+		BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
+		if (model != null) {
+			TextureAtlasSpriteAccessor accessor = (TextureAtlasSpriteAccessor) model.getParticleIcon();
+			if (accessor != null) {
+				NativeImage[] images = accessor.cf_getImages();
+				if (images != null && images.length > 0) {
+					return getAverageBright(images[0]);
+				}
+			}
+		}
+		return state.getMaterial().getColor().col;
+	}
+	
+	private static int getAverageBright(NativeImage img) {
+		long cr = 0;
+		long cg = 0;
+		long cb = 0;
+		long count = 0;
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
+				int abgr = img.getPixelRGBA(x, y);
+				int r = abgr & 255;
+				int g = (abgr >> 8) & 255;
+				int b = (abgr >> 16) & 255;
+				if (r > 200 || g > 200 || b > 200) {
+					cr += r;
+					cg += g;
+					cb += b;
+					count ++;
+				}
+			}
+		}
+		if (count == 0) return 0xffffff;
+		int r = (int) (cr / count);
+		int g = (int) (cg / count);
+		int b = (int) (cb / count);
+		return r << 16 | g << 8 | b;
 	}
 }

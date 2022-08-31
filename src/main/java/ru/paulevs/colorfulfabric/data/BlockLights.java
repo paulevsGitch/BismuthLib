@@ -42,6 +42,11 @@ public class BlockLights {
 		return TRANSFORMERS.getOrDefault(state, 0);
 	}
 	
+	public static void clear() {
+		LIGHTS.clear();
+		TRANSFORMERS.clear();
+	}
+	
 	private static int reverse(int color) {
 		int r = (color >> 16) & 255;
 		int g = (color >> 8) & 255;

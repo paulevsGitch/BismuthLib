@@ -4,6 +4,7 @@
 	"package": "ru.paulevs.colorfulfabric.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
+		"TextureAtlasSpriteAccessor",
 		"OptionsScreenMixin",
 		"LevelRendererMixin",
 		"RenderChunkMixin",
