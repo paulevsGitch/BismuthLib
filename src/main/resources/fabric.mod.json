@@ -1,29 +1,29 @@
 {
 	"schemaVersion": 1,
-	"id": "colorfulfabric",
+	"id": "bismuthlib",
 	"version": "${version}",
 	
-	"name": "Colorful Fabric",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Bismuth Lib",
+	"description": "A mod and library for colored lights",
 	"authors": [
 		"paulevs"
 	],
 	"contact": {
-		"homepage": "https://github.com/paulevsGitch/ColorfulFabric",
-		"sources": "https://github.com/paulevsGitch/ColorfulFabric"
+		"homepage": "https://github.com/paulevsGitch/BismuthLib",
+		"sources": "https://github.com/paulevsGitch/BismuthLib"
 	},
 	
 	"license": "MIT",
-	"icon": "assets/colorfulfabric/icon.png",
+	"icon": "assets/bismuthlib/icon.png",
 	
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"ru.paulevs.colorfulfabric.ColorfulFabricClient"
+			"ru.paulevs.bismuthlib.BismuthLibClient"
 		]
 	},
 	"mixins": [
-		"colorfulfabric.mixins.json"
+		"bismuthlib.mixins.json"
 	],
 	
 	"depends": {

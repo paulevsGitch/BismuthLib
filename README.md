@@ -1,4 +1,4 @@
-# ColorfulFabric
+# BismuthLib
 A simple client-side colored light mod/library for Fabric.
 Can load information about block light colors from resourcepacks
 and calculate color for blocks that don't have json-specified colors.
@@ -6,12 +6,12 @@ and calculate color for blocks that don't have json-specified colors.
 <br/>
 
 ### How to add light to blocks:
-ColorfulFabric use resourcepacks to add color light to blocks. You can add custom
+BismuthLib use resourcepacks to add color light to blocks. You can add custom
 blocks from both mod resources and simple resourcepack.
 
 To add blocks you need to use this resource path:
 ```
-assets/colorfulfabric/lights/<your_file>.json
+assets/bismuthlib/lights/<your_file>.json
 ```
 
 To keep files clear it is better to name them like mod_id.json, examples:
@@ -67,7 +67,7 @@ to states that have both radius and color.
 <br/>
 
 ### Examples
-[**Vanilla Blocks Example**](https://github.com/paulevsGitch/ColorfulFabric/blob/main/src/main/resources/assets/colorfulfabric/lights/minecraft.json)
+[**Vanilla Blocks Example**](https://github.com/paulevsGitch/BismuthLib/blob/main/src/main/resources/assets/bismuthlib/lights/minecraft.json)
 
 #### Simple light
 Will just add color to block (to all states of block)
