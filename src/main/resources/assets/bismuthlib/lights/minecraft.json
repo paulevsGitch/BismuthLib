@@ -1,0 +1,542 @@
+{
+	"minecraft:amethyst_cluster": {
+		"color": "a678f1",
+		"radius": 5
+	},
+	"minecraft:beacon": {
+		"color": "9cf2ed",
+		"radius": 15
+	},
+	"minecraft:crying_obsidian": {
+		"color": "8308e4",
+		"radius": 10
+	},
+	"minecraft:enchanting_table": {
+		"color": "6b002f",
+		"radius": 7
+	},
+	"minecraft:end_gateway": {
+		"color": "2d8c90",
+		"radius": 7
+	},
+	"minecraft:end_portal": {
+		"color": "2d8c90",
+		"radius": 15
+	},
+	"minecraft:end_portal_frame": {
+		"color": "2d8c90",
+		"radius": 1
+	},
+	"minecraft:end_rod": {
+		"color": "fff6e6",
+		"radius": 15
+	},
+	"minecraft:ender_chest": {
+		"color": "629b6a",
+		"radius": 7
+	},
+	"minecraft:fire": {
+		"color": "d78e0e",
+		"radius": 15
+	},
+	"minecraft:brown_mushroom": {
+		"color": "4c3d33",
+		"radius": 1
+	},
+	"minecraft:dragon_egg": {
+		"color": "2d0133",
+		"radius": 1
+	},
+	"minecraft:glow_lichen": {
+		"color": "739285",
+		"radius": 7
+	},
+	"minecraft:glowstone": {
+		"color": "fbda74",
+		"radius": 15
+	},
+	"minecraft:jack_o_lantern": {
+		"color": "e3901d",
+		"radius": 15
+	},
+	"minecraft:lantern": {
+		"color": "f9c966",
+		"radius": 15
+	},
+	"minecraft:large_amethyst_bud": {
+		"color": "a678f1",
+		"radius": 4
+	},
+	"minecraft:lava": {
+		"color": "de7a22",
+		"radius": 15
+	},
+	"minecraft:magma_block": {
+		"color": "e66410",
+		"radius": 3
+	},
+	"minecraft:medium_amethyst_bud": {
+		"color": "a678f1",
+		"radius": 2
+	},
+	"minecraft:nether_portal": {
+		"color": "963ae0",
+		"radius": 11
+	},
+	"minecraft:ochre_froglight": {
+		"color": "faefb2",
+		"radius": 15
+	},
+	"minecraft:verdant_froglight": {
+		"color": "d7eed5",
+		"radius": 15
+	},
+	"minecraft:pearlescent_froglight": {
+		"color": "e2d3d3",
+		"radius": 15
+	},
+	"minecraft:redstone_torch": {
+		"color": "ff0000",
+		"radius": 7
+	},
+	"minecraft:redstone_wall_torch": {
+		"color": "ff0000",
+		"radius": 7
+	},
+	"minecraft:redstone_block": {
+		"color": "ff0000",
+		"radius": 5
+	},
+	"minecraft:sea_lantern": {
+		"color": "e4ebe5",
+		"radius": 15
+	},
+	"minecraft:shroomlight": {
+		"color": "fe8738",
+		"radius": 15
+	},
+	"minecraft:soul_fire": {
+		"color": "0bcfd5",
+		"radius": 10
+	},
+	"minecraft:soul_lantern": {
+		"color": "0bcfd5",
+		"radius": 10
+	},
+	"minecraft:soul_torch": {
+		"color": "0bcfd5",
+		"radius": 10
+	},
+	"minecraft:soul_wall_torch": {
+		"color": "0bcfd5",
+		"radius": 10
+	},
+	"minecraft:torch": {
+		"color": "ffe86a",
+		"radius": 14
+	},
+	"minecraft:wall_torch": {
+		"color": "ffe86a",
+		"radius": 14
+	},
+	"minecraft:brewing_stand": {
+		"color": "d4b73a",
+		"radius": 1
+	},
+	"minecraft:conduit": {
+		"color": "e9d7aa",
+		"radius": 1
+	},
+	"minecraft:lava_cauldron": {
+		"color": "de7a22",
+		"radius": 15
+	},
+	"minecraft:sculk_catalyst": {
+		"color": "29dfeb",
+		"radius": 6
+	},
+	"minecraft:sculk_sensor": {
+		"color": "8308e4",
+		"radius": 1
+	},
+	"minecraft:small_amethyst_bud": {
+		"color": "a678f1",
+		"radius": 1
+	},
+	
+	"minecraft:light": {
+		"color": "ffffff",
+		"radius": {
+			"level=1": 1,
+			"level=2": 2,
+			"level=3": 3,
+			"level=4": 4,
+			"level=5": 5,
+			"level=6": 6,
+			"level=7": 7,
+			"level=8": 8,
+			"level=9": 9,
+			"level=10": 10,
+			"level=11": 11,
+			"level=12": 12,
+			"level=13": 13,
+			"level=14": 14,
+			"level=15": 15
+		}
+	},
+	"minecraft:redstone_wire": {
+		"color": "ff0000",
+		"radius": {
+			"power=1": 1,
+			"power=2": 1,
+			"power=3": 1,
+			"power=4": 1,
+			"power=5": 1,
+			"power=6": 1,
+			"power=7": 1,
+			"power=8": 1,
+			"power=9": 1,
+			"power=10": 1,
+			"power=11": 1,
+			"power=12": 1,
+			"power=13": 1,
+			"power=14": 1,
+			"power=15": 1
+		}
+	},
+	"minecraft:blast_furnace": {
+		"color": "ed5d0a",
+		"radius": {
+			"lit=true": 13
+		}
+	},
+	"minecraft:campfire": {
+		"color": "d78e0e",
+		"radius": {
+			"lit=true": 15
+		}
+	},
+	"minecraft:cave_vines": {
+		"color": "eb8931",
+		"radius": {
+			"berries=true": 14
+		}
+	},
+	"minecraft:cave_vines_plant": {
+		"color": "eb8931",
+		"radius": {
+			"berries=true": 14
+		}
+	},
+	"minecraft:deepslate_redstone_ore": {
+		"color": "ff0000",
+		"radius": {
+			"lit=true": 9
+		}
+	},
+	"minecraft:furnace": {
+		"color": "ff8f00",
+		"radius": {
+			"lit=true": 13
+		}
+	},
+	"minecraft:redstone_lamp": {
+		"color": "f2bd74",
+		"radius": {
+			"lit=true": 15
+		}
+	},
+	"minecraft:redstone_ore": {
+		"color": "ff0000",
+		"radius": {
+			"lit=true": 9
+		}
+	},
+	"minecraft:respawn_anchor": {
+		"color": "8308e4",
+		"radius": {
+			"charges=1": 3,
+			"charges=2": 7,
+			"charges=3": 11,
+			"charges=4": 15
+		}
+	},
+	"minecraft:sea_pickle": {
+		"color": "6c722a",
+		"radius": {
+			"waterlogged=true,pickles=1": 6,
+			"waterlogged=true,pickles=2": 9,
+			"waterlogged=true,pickles=3": 12,
+			"waterlogged=true,pickles=4": 15
+		}
+	},
+	"minecraft:smoker": {
+		"color": "ed8c0e",
+		"radius": {
+			"lit=true": 13
+		}
+	},
+	"minecraft:soul_campfire": {
+		"color": "0bcfd5",
+		"radius": {
+			"lit=true": 15
+		}
+	},
+	
+	"minecraft:candle": {
+		"color": "fef0b3",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:candle_cake": {
+		"color": "fef0b3",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	
+	"minecraft:white_candle": {
+		"color": "ffffff",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:white_candle_cake": {
+		"color": "ffffff",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:orange_candle": {
+		"color": "ff9929",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:orange_candle_cake": {
+		"color": "ff9929",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:magenta_candle": {
+		"color": "cc49b9",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:magenta_candle_cake": {
+		"color": "cc49b9",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:light_blue_candle": {
+		"color": "62c4ef",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:light_blue_candle_cake": {
+		"color": "62c4ef",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:yellow_candle": {
+		"color": "ffda39",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:yellow_candle_cake": {
+		"color": "ffda39",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:lime_candle": {
+		"color": "9bdf39",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:lime_candle_cake": {
+		"color": "9bdf39",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:pink_candle": {
+		"color": "f8a6bd",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:pink_candle_cake": {
+		"color": "f8a6bd",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:gray_candle": {
+		"color": "728996",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:gray_candle_cake": {
+		"color": "728996",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:light_gray_candle": {
+		"color": "c7c0b2",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:light_gray_candle_cake": {
+		"color": "c7c0b2",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:cyan_candle": {
+		"color": "17d2d2",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:cyan_candle_cake": {
+		"color": "17d2d2",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:purple_candle": {
+		"color": "a039d5",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:purple_candle_cake": {
+		"color": "a039d5",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:blue_candle": {
+		"color": "4573c7",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:blue_candle_cake": {
+		"color": "4573c7",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:brown_candle": {
+		"color": "ca8350",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:brown_candle_cake": {
+		"color": "ca8350",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:green_candle": {
+		"color": "82b216",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:green_candle_cake": {
+		"color": "82b216",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:red_candle": {
+		"color": "d2382e",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:red_candle_cake": {
+		"color": "d2382e",
+		"radius": {
+			"lit=true": 3
+		}
+	},
+	"minecraft:black_candle": {
+		"color": "584f93",
+		"radius": {
+			"lit=true,candles=1": 3,
+			"lit=true,candles=2": 6,
+			"lit=true,candles=3": 9,
+			"lit=true,candles=4": 12
+		}
+	},
+	"minecraft:black_candle_cake": {
+		"color": "584f93",
+		"radius": {
+			"lit=true": 3
+		}
+	}
+}

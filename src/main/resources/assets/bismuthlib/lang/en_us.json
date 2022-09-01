@@ -1,0 +1,20 @@
+{
+	"bismuthlib.options.settings": "Bismuth Lib",
+	"bismuthlib.options.settings.title": "Bismuth Lib Settings",
+	"bismuthlib.options.mapRadiusXZ": "XZ Radius",
+	"bismuthlib.options.mapRadiusY": "Y Radius",
+	"bismuthlib.options.mapRadiusY.3": "3 (Fast)",
+	"bismuthlib.options.mapRadiusY.5": "5 (Normal)",
+	"bismuthlib.options.mapRadiusY.7": "7 (High)",
+	"bismuthlib.options.mapRadiusY.9": "9 (Very High)",
+	"bismuthlib.options.mapRadiusY.11": "11 (Extreme)",
+	"bismuthlib.options.mapRadiusY.13": "13 (Showoff)",
+	"bismuthlib.options.mapRadiusY.15": "15 (Maximum)",
+	"bismuthlib.options.lightType": "Light Type",
+	"bismuthlib.options.fastLight.true": "Fast",
+	"bismuthlib.options.fastLight.false": "Fancy",
+	"bismuthlib.options.threads": "Threads",
+	"bismuthlib.options.modifyColor": "Modify Light",
+	"bismuthlib.options.modifyColor.true": "Enabled",
+	"bismuthlib.options.modifyColor.false": "Disabled"
+}

@@ -1,0 +1,130 @@
+{
+	"edenring:brain_tree_block_copper": {
+		"color": "d1e9f6",
+		"radius": 15
+	},
+	"edenring:brain_tree_block_gold": {
+		"color": "d1e9f6",
+		"radius": 15
+	},
+	"edenring:brain_tree_block_iron": {
+		"color": "d1e9f6",
+		"radius": 15
+	},
+	
+	"edenring:gravilite_block": {
+		"color": "71dbfa",
+		"radius": 15
+	},
+	"edenring:gravilite_shards": {
+		"color": "71dbfa",
+		"radius": 15
+	},
+	"edenring:gravilite_lamp": {
+		"color": "71dbfa",
+		"radius": 15
+	},
+	"edenring:gravilite_lantern": {
+		"color": "71dbfa",
+		"radius": 15
+	},
+	"edenring:gravilite_lantern_tall": {
+		"color": "71dbfa",
+		"radius": 15
+	},
+	
+	"edenring:gravity_compressor": {
+		"color": "71dbfa",
+		"radius": {
+			"level=1": 1,
+			"level=2": 2,
+			"level=3": 3,
+			"level=4": 4,
+			"level=5": 5,
+			"level=6": 6,
+			"level=7": 7,
+			"level=8": 8,
+			"level=9": 9,
+			"level=10": 10,
+			"level=11": 11,
+			"level=12": 12,
+			"level=13": 13,
+			"level=14": 14,
+			"level=15": 15
+		}
+	},
+	
+	"edenring:mycotic_lantern_white": {
+		"color": "e5e2dd",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_orange": {
+		"color": "f67b18",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_magenta": {
+		"color": "d660d1",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_light_blue": {
+		"color": "41bbdf",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_yellow": {
+		"color": "fed93f",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_lime": {
+		"color": "86cc26",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_pink": {
+		"color": "f49eb9",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_gray": {
+		"color": "657075",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_light_gray": {
+		"color": "b1b1ae",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_cyan": {
+		"color": "169b9c",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_purple": {
+		"color": "9743cd",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_blue": {
+		"color": "3e42b6",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_brown": {
+		"color": "9c663f",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_green": {
+		"color": "658619",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_red": {
+		"color": "cb3930",
+		"radius": 15
+	},
+	"edenring:mycotic_lantern_black": {
+		"color": "353538",
+		"radius": 15
+	},
+	
+	"edenring:portal_center": {
+		"color": "c890f0",
+		"radius": 15
+	},
+	"edenring:symbiotic_mold_emissive": {
+		"color": "d6d863",
+		"radius": 15
+	}
+}
