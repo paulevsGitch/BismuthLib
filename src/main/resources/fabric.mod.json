@@ -10,7 +10,8 @@
 	],
 	"contact": {
 		"homepage": "https://github.com/paulevsGitch/BismuthLib",
-		"sources": "https://github.com/paulevsGitch/BismuthLib"
+		"sources": "https://github.com/paulevsGitch/BismuthLib",
+		"issues": "https://github.com/paulevsGitch/BismuthLib/issues"
 	},
 	
 	"license": "MIT",
