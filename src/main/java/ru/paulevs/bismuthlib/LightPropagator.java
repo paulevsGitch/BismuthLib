@@ -28,12 +28,17 @@ public class LightPropagator {
 	private static final int WHITE = 0xFFFFFFFF;
 	
 	private final List<Set<BlockPos>> buffers = new ArrayList<>(2);
+	private final MutableBlockPos[] positions = new MutableBlockPos[35937];
 	private final boolean[] mask = new boolean[35937];
 	private final int[] multipliers = new int[35937];
+	MutableBlockPos pos = new MutableBlockPos();
 	
 	public LightPropagator() {
 		buffers.add(new HashSet<>());
 		buffers.add(new HashSet<>());
+		for (int i = 0; i < positions.length; i++) {
+			positions[i] = new MutableBlockPos();
+		}
 	}
 	
 	public void fastLight(Level level, BlockPos sectionPos, int[] data) {
@@ -43,8 +48,8 @@ public class LightPropagator {
 		LevelChunkSection section = chunk.getSection(sectionPos.getY() - level.getMinSection());
 		if (section == null) return;
 		
-		MutableBlockPos pos = new MutableBlockPos();
-		MutableBlockPos pos2 = new MutableBlockPos();
+		MutableBlockPos pos = positions[0];
+		MutableBlockPos pos2 = positions[1];
 		
 		for (byte x = 0; x < 16; x++) {
 			pos.setX(sectionPos.getX() << 4 | x);
@@ -104,7 +109,6 @@ public class LightPropagator {
 		int z2 = z1 + 48;
 		
 		Arrays.fill(data, ALPHA);
-		MutableBlockPos pos = new MutableBlockPos();
 		
 		for (int x = x1; x < x2; x++) {
 			pos.setX(x);
@@ -114,7 +118,7 @@ public class LightPropagator {
 					pos.setZ(z);
 					BlockState state = level.getBlockState(pos);
 					LightInfo light = BlockLights.getLight(state);
-					if (light != null) {
+					if (light != null && canAffect(pos, light.getRadius(), secMin, secMax)) {
 						//fastFillLight(data, pos, light, secMin, secMax);
 						fillLight(level, data, pos, light, secMin, secMax);
 					}
@@ -123,9 +127,16 @@ public class LightPropagator {
 		}
 	}
 	
+	private boolean canAffect(BlockPos lightPos, int radius, BlockPos secMin, BlockPos secMax) {
+		if (lightPos.getX() + radius < secMin.getX() || lightPos.getX() - radius > secMax.getX()) return false;
+		if (lightPos.getY() + radius < secMin.getY() || lightPos.getY() - radius > secMax.getY()) return false;
+		if (lightPos.getZ() + radius < secMin.getZ() || lightPos.getZ() - radius > secMax.getZ()) return false;
+		return true;
+	}
+	
 	private void fastFillLight(Level level, int[] data, BlockPos pos, LightInfo info, BlockPos secMin, BlockPos secMax) {
 		int radius = info.getRadius();
-		MutableBlockPos p = new MutableBlockPos();
+		MutableBlockPos p = positions[0];
 		for (int i = -radius; i <= radius; i++) {
 			p.setX(pos.getX() + i);
 			for (int j = -radius; j <= radius; j++) {
@@ -167,11 +178,9 @@ public class LightPropagator {
 			
 			for (BlockPos start: starts) {
 				for (Direction offset: DIRECTIONS) {
-					BlockPos p = start.relative(offset);
-					
-					byte maskX = (byte) (p.getX() - pos.getX());
-					byte maskY = (byte) (p.getY() - pos.getY());
-					byte maskZ = (byte) (p.getZ() - pos.getZ());
+					byte maskX = (byte) (start.getX() - pos.getX() + offset.getStepX());
+					byte maskY = (byte) (start.getY() - pos.getY() + offset.getStepY());
+					byte maskZ = (byte) (start.getZ() - pos.getZ() + offset.getStepZ());
 					
 					if (maskX < -radius || maskY < -radius || maskZ < -radius || maskX > radius || maskY > radius || maskZ > radius) continue;
 					
@@ -181,6 +190,7 @@ public class LightPropagator {
 					
 					int maskIndex = getMaskIndex(maskX, maskY, maskZ);
 					if (mask[maskIndex]) continue;
+					BlockPos p = positions[maskIndex].set(start).move(offset);
 					
 					if (modify) {
 						dx = (byte) (pos.getX() - p.getX());
