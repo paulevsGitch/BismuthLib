@@ -4,6 +4,7 @@ import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import ru.paulevs.bismuthlib.ColorMath;
 
 public class ProviderLight extends LightInfo {
 	private final float[] multipliers;
@@ -26,16 +27,16 @@ public class ProviderLight extends LightInfo {
 	
 	@Override
 	public int getSimple(Level level, BlockPos pos, byte i) {
-		int rgb = reverse(color.getColor(state, level, pos, index));
+		int rgb = ColorMath.reverse(color.getColor(state, level, pos, index));
 		if (i == 0) return rgb;
-		return i < 7 ? multiply(rgb, 0.75F) : multiply(rgb, 0.29F);
+		return i < 7 ? ColorMath.multiply(rgb, 0.75F) : ColorMath.multiply(rgb, 0.29F);
 	}
 	
 	@Override
 	public int getAdvanced(Level level, BlockPos pos, byte i) {
-		int rgb = reverse(color.getColor(state, level, pos, index));
+		int rgb = ColorMath.reverse(color.getColor(state, level, pos, index));
 		if (i == 0) return rgb;
-		return multiply(rgb, multipliers[i - 1]);
+		return ColorMath.multiply(rgb, multipliers[i - 1]);
 	}
 	
 	@Override

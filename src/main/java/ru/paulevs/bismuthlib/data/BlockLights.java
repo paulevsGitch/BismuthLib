@@ -2,6 +2,7 @@ package ru.paulevs.bismuthlib.data;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import ru.paulevs.bismuthlib.ColorMath;
 import ru.paulevs.bismuthlib.data.info.LightInfo;
 
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class BlockLights {
 	}
 	
 	public static int getTransformer(BlockState state) {
-		return TRANSFORMERS.getOrDefault(state, 0);
+		return TRANSFORMERS.getOrDefault(state, ColorMath.WHITE);
 	}
 	
 	public static void clear() {

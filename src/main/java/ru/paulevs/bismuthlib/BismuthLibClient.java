@@ -34,6 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -69,11 +70,6 @@ public class BismuthLibClient implements ClientModInitializer {
 	
 	@Override
 	public void onInitializeClient() {
-		/*for (DyeColor color: DyeColor.values()) {
-			Block block = Registry.BLOCK.get(new ResourceLocation(color.getName() + "_stained_glass"));
-			BlockLights.addTransformer(block, color.getMaterialColor().col);
-		}*/
-		
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
 			int x1 = 0;
 			int y1 = 0;
@@ -220,6 +216,11 @@ public class BismuthLibClient implements ClientModInitializer {
 						BlockLights.addLight(state, new SimpleLight(color, radius));
 					});
 				});
+				
+				for (DyeColor color: DyeColor.values()) {
+					Block block = Registry.BLOCK.get(new ResourceLocation(color.getName() + "_stained_glass"));
+					BlockLights.addTransformer(block, color.getMaterialColor().col);
+				}
 			}
 		});
 	}

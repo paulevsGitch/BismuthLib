@@ -2,25 +2,32 @@ package ru.paulevs.bismuthlib.data.info;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import ru.paulevs.bismuthlib.ColorMath;
 
 public class SimpleLight extends LightInfo {
 	private final int[] simple;
 	private final int[] advanced;
 	
 	public SimpleLight(int color, int radius) {
-		color = reverse(color);
+		this(color, radius, true);
+	}
+	
+	public SimpleLight(int color, int radius, boolean reverse) {
+		if (reverse) {
+			color = ColorMath.reverse(color);
+		}
 		
 		simple = new int[] {
 			color,
-			multiply(color, 0.75F),
-			multiply(color, 0.29F),
+			ColorMath.multiply(color, 0.75F),
+			ColorMath.multiply(color, 0.29F),
 		};
 		
 		advanced = new int[radius];
 		advanced[0] = color;
 		for (byte i = 1; i < radius; i++) {
 			float power = 1.0F - (float) i / radius;
-			advanced[i] = multiply(color, power);
+			advanced[i] = ColorMath.multiply(color, power);
 		}
 	}
 	

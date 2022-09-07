@@ -4,13 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import ru.paulevs.bismuthlib.data.BlockLights;
 import ru.paulevs.bismuthlib.data.info.LightInfo;
+import ru.paulevs.bismuthlib.data.info.SimpleLight;
 import ru.paulevs.bismuthlib.gui.CFOptions;
 
 import java.util.ArrayList;
@@ -23,14 +23,12 @@ import java.util.Set;
 public class LightPropagator {
 	private static final Direction[] DIRECTIONS = Direction.values();
 	private static final byte MASK_OFFSET = 17;
-	private static final int ALPHA = 255 << 24;
 	private static final BlockPos[] OFFSETS;
-	private static final int WHITE = 0xFFFFFFFF;
 	
 	private final List<Set<BlockPos>> buffers = new ArrayList<>(2);
 	private final MutableBlockPos[] positions = new MutableBlockPos[35937];
+	private final Set<TransformerInfo> transformers = new HashSet<>();
 	private final boolean[] mask = new boolean[35937];
-	private final int[] multipliers = new int[35937];
 	MutableBlockPos pos = new MutableBlockPos();
 	
 	public LightPropagator() {
@@ -58,13 +56,13 @@ public class LightPropagator {
 				for (byte z = 0; z < 16; z++) {
 					pos.setZ(sectionPos.getZ() << 4 | z);
 					int index = x << 8 | y << 4 | z;
-					data[index] = ALPHA;
+					data[index] = ColorMath.ALPHA;
 					
 					BlockState state = section.getBlockState(x, y, z);
 					LightInfo light = BlockLights.getLight(state);
 					
 					if (light != null) {
-						data[index] = light.getSimple(level, pos, (byte) 0) | ALPHA;
+						data[index] = light.getSimple(level, pos, (byte) 0) | ColorMath.ALPHA;
 						continue;
 					}
 					
@@ -79,7 +77,7 @@ public class LightPropagator {
 						state = level.getBlockState(pos2);
 						light = BlockLights.getLight(state);
 						if (light != null) {
-							data[index] = maxBlend(data[index], light.getSimple(level, pos, i)) | ALPHA;
+							data[index] = ColorMath.maxBlend(data[index], light.getSimple(level, pos, i)) | ColorMath.ALPHA;
 						}
 					}
 				}
@@ -108,7 +106,7 @@ public class LightPropagator {
 		int y2 = y1 + 48;
 		int z2 = z1 + 48;
 		
-		Arrays.fill(data, ALPHA);
+		Arrays.fill(data, ColorMath.ALPHA);
 		
 		for (int x = x1; x < x2; x++) {
 			pos.setX(x);
@@ -120,11 +118,14 @@ public class LightPropagator {
 					LightInfo light = BlockLights.getLight(state);
 					if (light != null && canAffect(pos, light.getRadius(), secMin, secMax)) {
 						//fastFillLight(data, pos, light, secMin, secMax);
-						fillLight(level, data, pos, light, secMin, secMax);
+						fillLight(level, data, pos, light, secMin, secMax, CFOptions.modifyColor());
 					}
 				}
 			}
 		}
+		
+		transformers.forEach(info -> fillLight(level, data, info.pos, info.light, secMin, secMax, false));
+		transformers.clear();
 	}
 	
 	private boolean canAffect(BlockPos lightPos, int radius, BlockPos secMin, BlockPos secMax) {
@@ -151,11 +152,8 @@ public class LightPropagator {
 		}
 	}
 	
-	private void fillLight(Level level, int[] data, BlockPos pos, LightInfo info, BlockPos secMin, BlockPos secMax) {
-		boolean modify = CFOptions.modifyColor();
-		
+	private void fillLight(Level level, int[] data, BlockPos pos, LightInfo info, BlockPos secMin, BlockPos secMax, boolean modify) {
 		Arrays.fill(mask, false);
-		if (modify) Arrays.fill(multipliers, WHITE);
 		mask[getMaskIndex(MASK_OFFSET, MASK_OFFSET, MASK_OFFSET)] = true;
 		
 		int color = info.getAdvanced(level, pos, (byte) 0);
@@ -165,11 +163,6 @@ public class LightPropagator {
 		byte radius = (byte) info.getRadius();
 		byte bufferIndex = 0;
 		
-		byte dx, dy, dz;
-		dx = dy = dz = 0;
-		int multiplier = 0;
-		int transformer = 0;
-		float ax, ay, az, max;
 		for (byte i = 1; i < radius; i++) {
 			Set<BlockPos> starts = buffers.get(bufferIndex);
 			bufferIndex = (byte) ((bufferIndex + 1) & 1);
@@ -190,42 +183,15 @@ public class LightPropagator {
 					
 					int maskIndex = getMaskIndex(maskX, maskY, maskZ);
 					if (mask[maskIndex]) continue;
+					
 					BlockPos p = positions[maskIndex].set(start).move(offset);
-					
-					if (modify) {
-						dx = (byte) (pos.getX() - p.getX());
-						dy = (byte) (pos.getY() - p.getY());
-						dz = (byte) (pos.getZ() - p.getZ());
-						ax = Math.abs(dx);
-						ay = Math.abs(dy);
-						az = Math.abs(dz);
-						max = Math.max(ax, Math.max(ay, az));
-						dx = (byte) (Math.round(Math.abs(dx) / max) * Mth.sign(dx));
-						dy = (byte) (Math.round(Math.abs(dy) / max) * Mth.sign(dy));
-						dz = (byte) (Math.round(Math.abs(dz) / max) * Mth.sign(dz));
-					}
-					
 					BlockState state = level.getBlockState(p);
-					int currentColor = color;
 					
-					if (modify) {
-						transformer = BlockLights.getTransformer(state);
-						multiplier = multipliers[getMaskIndex(
-							(byte) (maskX + dx),
-							(byte) (maskY + dy),
-							(byte) (maskZ + dz)
-						)];
-						if (multiplier != WHITE) {
-							currentColor = mulBlend(color, multiplier);
-							multipliers[maskIndex] = multiplier;
-						}
-					}
-					
-					if (modify && transformer != 0) {
-						setLight(data, p, currentColor, secMin, secMax, false);
-						multipliers[maskIndex] = multiplier != WHITE ? mulBlend(transformer, multiplier) : transformer;
+					int transformer = BlockLights.getTransformer(state);
+					if (modify && transformer != ColorMath.WHITE) {
+						int mixedColor = ColorMath.mulBlend(color, transformer);
+						transformers.add(new TransformerInfo(new SimpleLight(mixedColor, radius - i, false), p.immutable()));
 						mask[maskIndex] = true;
-						ends.add(p);
 						continue;
 					}
 					else if (BlockLights.getLight(state) != null) {
@@ -237,7 +203,7 @@ public class LightPropagator {
 					}
 					
 					mask[maskIndex] = true;
-					setLight(data, p, currentColor, secMin, secMax, true);
+					setLight(data, p, color, secMin, secMax, true);
 					ends.add(p);
 				}
 			}
@@ -263,8 +229,8 @@ public class LightPropagator {
 	private void setLight(int[] data, BlockPos pos, int light, BlockPos secMin, BlockPos secMax, boolean maxBlend) {
 		if (greaterThan(pos, secMin) && smallerThan(pos, secMax)) {
 			int index = (pos.getX() & 15) << 8 | (pos.getY() & 15) << 4 | (pos.getZ() & 15);
-			if (maxBlend) data[index] = maxBlend(data[index], light) | ALPHA;
-			else data[index] = mulBlend(data[index], light) | ALPHA;
+			if (maxBlend) data[index] = ColorMath.maxBlend(data[index], light) | ColorMath.ALPHA;
+			else data[index] = ColorMath.mulBlend(data[index], light) | ColorMath.ALPHA;
 		}
 	}
 	
@@ -274,20 +240,6 @@ public class LightPropagator {
 	
 	private boolean smallerThan(BlockPos a, BlockPos b) {
 		return a.getX() < b.getX() && a.getY() < b.getY() && a.getZ() < b.getZ();
-	}
-	
-	private static int maxBlend(int a, int b) {
-		int i1 = Math.max(a & 0x00FF0000, b & 0x00FF0000);
-		int i2 = Math.max(a & 0x0000FF00, b & 0x0000FF00);
-		int i3 = Math.max(a & 0x000000FF, b & 0x000000FF);
-		return i1 | i2 | i3;
-	}
-	
-	private static int mulBlend(int a, int b) {
-		int i1 = (int) ((((a >> 16) & 255) / 255F) * (((b >> 16) & 255) / 255F) * 255);
-		int i2 = (int) ((((a >> 8) & 255) / 255F) * (((b >> 8) & 255) / 255F) * 255);
-		int i3 = (int) (((a & 255) / 255F) * ((b & 255) / 255F) * 255);
-		return i1 << 16 | i2 << 8 | i3;
 	}
 	
 	static {
@@ -306,5 +258,15 @@ public class LightPropagator {
 			.sorted(Comparator.comparingDouble(b -> b.distSqr(Vec3i.ZERO)))
 			.toList()
 			.toArray(new BlockPos[27]);
+	}
+	
+	private class TransformerInfo {
+		final LightInfo light;
+		final BlockPos pos;
+		
+		private TransformerInfo(LightInfo light, BlockPos pos) {
+			this.light = light;
+			this.pos = pos;
+		}
 	}
 }
