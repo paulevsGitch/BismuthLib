@@ -37,7 +37,7 @@ void main() {
 	skylight = clamp(UV2.y / 150.0, 0.0, 1.0) * clamp(sin(1.5707 - timeOfDay * 6.2831) * 3.0, 0.0, 1.0);
 	defaultVertex = Color * minecraft_sample_lightmap(Sampler2, UV2);
 	float offset = (1 - fastLight) * clamp((max(Normal.x, max(Normal.y, Normal.z)) - 0.9) * 10.0, 0.0, 1.0);
-	blockPos = Position + offset * Normal * 0.51;
+	blockPos = Position;
 	colorMultiplier = Color.rgb;
 
     vertexDistance = fog_distance(ModelViewMat, pos, FogShape);

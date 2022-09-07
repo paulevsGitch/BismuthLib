@@ -90,7 +90,7 @@ vec3 getColor(ivec3 sectionPos, ivec3 blockPos, int textureSize, int sideX, int 
 	return color;
 }
 
-vec3 getInterpolatedColor(sampler2D sampler, vec3 blockPos, ivec3 playerSectionPos, vec3 chunkOffset, ivec2 dataScale, int dataSide, vec3 normal) {
+vec3 getInterpolatedColor(sampler2D sampler, vec3 blockPos, ivec3 playerSectionPos, vec3 chunkOffset, ivec2 dataScale, int dataSide) {
 	int textureSize = textureSize(sampler, 0).x;
 	
 	ivec3 sectionPos = ivec3(
@@ -113,59 +113,24 @@ vec3 getInterpolatedColor(sampler2D sampler, vec3 blockPos, ivec3 playerSectionP
 	float dy = bpos.y - by1;
 	float dz = bpos.z - bz1;
 	
-	if (abs(normal.x) > 0.99 && abs(dx - 0.5) > 0.45) {
-		vec3 a = getColor(sectionPos, ivec3(bx1, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 b = getColor(sectionPos, ivec3(bx1, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 c = getColor(sectionPos, ivec3(bx1, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 d = getColor(sectionPos, ivec3(bx1, by2, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		
-		a = mix(a, b, dy);
-		b = mix(c, d, dy);
-		
-		return mix(a, b, dz);
-	}
-	else if (abs(normal.y) > 0.99 && abs(dy - 0.5) > 0.45) {
-		vec3 a = getColor(sectionPos, ivec3(bx1, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 b = getColor(sectionPos, ivec3(bx2, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 c = getColor(sectionPos, ivec3(bx1, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 d = getColor(sectionPos, ivec3(bx2, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		
-		a = mix(a, b, dx);
-		b = mix(c, d, dx);
-		
-		return mix(a, b, dz);
-	}
-	else if (abs(normal.z) > 0.99 && abs(dz - 0.5) > 0.45) {
-		vec3 a = getColor(sectionPos, ivec3(bx1, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 b = getColor(sectionPos, ivec3(bx2, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 c = getColor(sectionPos, ivec3(bx1, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 d = getColor(sectionPos, ivec3(bx2, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		
-		a = mix(a, b, dx);
-		b = mix(c, d, dx);
-		
-		return mix(a, b, dy);
-	}
-	else {
-		vec3 a = getColor(sectionPos, ivec3(bx1, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 b = getColor(sectionPos, ivec3(bx2, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 c = getColor(sectionPos, ivec3(bx1, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 d = getColor(sectionPos, ivec3(bx2, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 e = getColor(sectionPos, ivec3(bx1, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 f = getColor(sectionPos, ivec3(bx2, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 g = getColor(sectionPos, ivec3(bx1, by2, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		vec3 h = getColor(sectionPos, ivec3(bx2, by2, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
-		
-		a = mix(a, b, dx);
-		b = mix(c, d, dx);
-		c = mix(e, f, dx);
-		d = mix(g, h, dx);
-		
-		a = mix(a, b, dy);
-		b = mix(c, d, dy);
-		
-		return mix(a, b, dz);
-	}
+	vec3 a = getColor(sectionPos, ivec3(bx1, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 b = getColor(sectionPos, ivec3(bx2, by1, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 c = getColor(sectionPos, ivec3(bx1, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 d = getColor(sectionPos, ivec3(bx2, by2, bz1), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 e = getColor(sectionPos, ivec3(bx1, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 f = getColor(sectionPos, ivec3(bx2, by1, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 g = getColor(sectionPos, ivec3(bx1, by2, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	vec3 h = getColor(sectionPos, ivec3(bx2, by2, bz2), textureSize, sideX, sideY, sampler, playerSectionPos, dataScale, dataSide);
+	
+	a = mix(a, b, dx);
+	b = mix(c, d, dx);
+	c = mix(e, f, dx);
+	d = mix(g, h, dx);
+	
+	a = mix(a, b, dy);
+	b = mix(c, d, dy);
+	
+	return mix(a, b, dz);
 }
 
 float getDistanceMix(vec3 blockPos, vec3 chunkOffset, ivec2 dataScale) {
@@ -183,7 +148,9 @@ vec4 addColoredLight(vec4 color, vec4 vertex, vec4 tex, sampler2D sampler, vec3 
 	//return vec4(skylight, skylight, skylight, 1.0);
 	
 	vec4 def = tex * defaultVertex;
-	vec3 coloredLight = getInterpolatedColor(sampler, blockPos, playerSectionPos, chunkOffset, dataScale, dataSide, normal) * (1.0 - skylight);
+	vec3 light1 = getInterpolatedColor(sampler, blockPos, playerSectionPos, chunkOffset, dataScale, dataSide);
+	vec3 light2 = getInterpolatedColor(sampler, blockPos + normal * 0.5, playerSectionPos, chunkOffset, dataScale, dataSide);
+	vec3 coloredLight = max(light1, light2) * (1.0 - skylight);
 	float m = getDistanceMix(blockPos, chunkOffset, dataScale);
 	
 	vec3 hsv = rgbToHSV(colorMultiplier.rgb);
