@@ -34,7 +34,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,6 +43,8 @@ import ru.paulevs.bismuthlib.data.BlockLights;
 import ru.paulevs.bismuthlib.data.LevelShaderData;
 import ru.paulevs.bismuthlib.data.info.ProviderLight;
 import ru.paulevs.bismuthlib.data.info.SimpleLight;
+import ru.paulevs.bismuthlib.data.transformer.ProviderLightTransformer;
+import ru.paulevs.bismuthlib.data.transformer.SimpleLightTransformer;
 import ru.paulevs.bismuthlib.gui.CFOptions;
 import ru.paulevs.bismuthlib.mixin.TextureAtlasSpriteAccessor;
 
@@ -217,10 +218,75 @@ public class BismuthLibClient implements ClientModInitializer {
 					});
 				});
 				
-				for (DyeColor color: DyeColor.values()) {
-					Block block = Registry.BLOCK.get(new ResourceLocation(color.getName() + "_stained_glass"));
-					BlockLights.addTransformer(block, color.getMaterialColor().col);
-				}
+				list = resourceManager.listResources("transformers", resourceLocation ->
+					resourceLocation.getPath().endsWith(".json") && resourceLocation.getNamespace().equals(MOD_ID)
+				);
+				
+				list.forEach((id, resource) -> {
+					JsonObject obj = new JsonObject();
+					
+					try {
+						BufferedReader reader = resource.openAsReader();
+						obj = gson.fromJson(reader, JsonObject.class);
+						reader.close();
+					}
+					catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					final JsonObject storage = obj;
+					storage.keySet().forEach(key -> {
+						ResourceLocation blockID = new ResourceLocation(key);
+						Optional<Block> optional = Registry.BLOCK.getOptional(blockID);
+						if (optional.isPresent()) {
+							Block block = optional.get();
+							ImmutableList<BlockState> blockStates = block.getStateDefinition().getPossibleStates();
+							exclude.add(block);
+							
+							JsonObject data = storage.getAsJsonObject(key);
+							if (data.keySet().isEmpty()) {
+								BlockLights.addLight(block, null);
+							}
+							else {
+								colorMap.clear();
+								BlockColor provider = null;
+								int providerIndex = 0;
+								
+								JsonElement element = data.get("color");
+								if (element == null) throw new RuntimeException("Block " + blockID + " in " + id + " missing color element!");
+								if (element.isJsonPrimitive()) {
+									String preValue = element.getAsString();
+									if (preValue.startsWith("provider")) {
+										provider = ColorProviderRegistry.BLOCK.get(block);
+										providerIndex = Integer.parseInt(preValue.substring(preValue.indexOf('=') + 1));
+									}
+									else {
+										int value = Integer.parseInt(preValue, 16);
+										blockStates.forEach(state -> colorMap.put(state, value));
+									}
+								}
+								else {
+									getValues(block, element.getAsJsonObject()).forEach((state, primitive) -> {
+										int value = Integer.parseInt(primitive.getAsString(), 16);
+										colorMap.put(state, value);
+									});
+								}
+								
+								final int indexCopy = providerIndex;
+								final BlockColor colorCopy = provider;
+								blockStates.forEach(state -> {
+									if (colorCopy != null) {
+										BlockLights.addTransformer(state, new ProviderLightTransformer(state, colorCopy, indexCopy));
+									}
+									else if (colorMap.containsKey(state)) {
+										BlockLights.addTransformer(state, new SimpleLightTransformer(colorMap.get(state)));
+									}
+								});
+							}
+						}
+					});
+				});
+				
 			}
 		});
 	}

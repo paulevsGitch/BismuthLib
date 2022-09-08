@@ -11,6 +11,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import ru.paulevs.bismuthlib.data.BlockLights;
 import ru.paulevs.bismuthlib.data.info.LightInfo;
 import ru.paulevs.bismuthlib.data.info.SimpleLight;
+import ru.paulevs.bismuthlib.data.transformer.LightTransformer;
 import ru.paulevs.bismuthlib.gui.CFOptions;
 
 import java.util.ArrayList;
@@ -187,9 +188,9 @@ public class LightPropagator {
 					BlockPos p = positions[maskIndex].set(start).move(offset);
 					BlockState state = level.getBlockState(p);
 					
-					int transformer = BlockLights.getTransformer(state);
-					if (modify && transformer != ColorMath.WHITE) {
-						int mixedColor = ColorMath.mulBlend(color, transformer);
+					LightTransformer transformer = BlockLights.getTransformer(state);
+					if (modify && transformer != null) {
+						int mixedColor = ColorMath.mulBlend(color, transformer.getColor(level, p));
 						transformers.add(new TransformerInfo(new SimpleLight(mixedColor, radius - i, false), p.immutable()));
 						mask[maskIndex] = true;
 						continue;

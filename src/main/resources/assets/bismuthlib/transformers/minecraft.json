@@ -1,0 +1,95 @@
+{
+	"minecraft:orange_stained_glass": {
+		"color": "d87f33"
+	},
+	"minecraft:magenta_stained_glass": {
+		"color": "b24cd8"
+	},
+	"minecraft:light_blue_stained_glass": {
+		"color": "6699d8"
+	},
+	"minecraft:yellow_stained_glass": {
+		"color": "e5e533"
+	},
+	"minecraft:lime_stained_glass": {
+		"color": "7fcc19"
+	},
+	"minecraft:pink_stained_glass": {
+		"color": "f27fa5"
+	},
+	"minecraft:gray_stained_glass": {
+		"color": "4c4c4c"
+	},
+	"minecraft:light_gray_stained_glass": {
+		"color": "999999"
+	},
+	"minecraft:cyan_stained_glass": {
+		"color": "4c7f99"
+	},
+	"minecraft:purple_stained_glass": {
+		"color": "7f3fb2"
+	},
+	"minecraft:blue_stained_glass": {
+		"color": "334cb2"
+	},
+	"minecraft:brown_stained_glass": {
+		"color": "664c33"
+	},
+	"minecraft:green_stained_glass": {
+		"color": "667f33"
+	},
+	"minecraft:red_stained_glass": {
+		"color": "993333"
+	},
+	"minecraft:black_stained_glass": {
+		"color": "191919"
+	},
+	"minecraft:orange_stained_glass_pane": {
+		"color": "d87f33"
+	},
+	"minecraft:magenta_stained_glass_pane": {
+		"color": "b24cd8"
+	},
+	"minecraft:light_blue_stained_glass_pane": {
+		"color": "6699d8"
+	},
+	"minecraft:yellow_stained_glass_pane": {
+		"color": "e5e533"
+	},
+	"minecraft:lime_stained_glass_pane": {
+		"color": "7fcc19"
+	},
+	"minecraft:pink_stained_glass_pane": {
+		"color": "f27fa5"
+	},
+	"minecraft:gray_stained_glass_pane": {
+		"color": "4c4c4c"
+	},
+	"minecraft:light_gray_stained_glass_pane": {
+		"color": "999999"
+	},
+	"minecraft:cyan_stained_glass_pane": {
+		"color": "4c7f99"
+	},
+	"minecraft:purple_stained_glass_pane": {
+		"color": "7f3fb2"
+	},
+	"minecraft:blue_stained_glass_pane": {
+		"color": "334cb2"
+	},
+	"minecraft:brown_stained_glass_pane": {
+		"color": "664c33"
+	},
+	"minecraft:green_stained_glass_pane": {
+		"color": "667f33"
+	},
+	"minecraft:red_stained_glass_pane": {
+		"color": "993333"
+	},
+	"minecraft:black_stained_glass_pane": {
+		"color": "191919"
+	},
+	"minecraft:slime_block": {
+		"color": "73c262"
+	}
+}

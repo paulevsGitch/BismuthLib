@@ -17,7 +17,7 @@ vec3 hsvToRGB(vec3 color) {
 
 // Value near 254
 bool isEmissive(float alpha) {
-	return 0.9960 < alpha && alpha < 0.9962;
+	return 0.9960784 < alpha && alpha < 0.9960785;
 }
 
 int getSectionIndex(int sectionX, int sectionY, int sectionZ, int scaleX, int scaleY) {
