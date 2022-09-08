@@ -4,11 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import ru.paulevs.bismuthlib.data.BlockLights;
+import ru.paulevs.bismuthlib.data.SimpleBlockStorage;
 import ru.paulevs.bismuthlib.data.info.LightInfo;
 import ru.paulevs.bismuthlib.data.info.SimpleLight;
 import ru.paulevs.bismuthlib.data.transformer.LightTransformer;
@@ -30,6 +32,7 @@ public class LightPropagator {
 	private final MutableBlockPos[] positions = new MutableBlockPos[35937];
 	private final Set<TransformerInfo> transformers = new HashSet<>();
 	private final boolean[] mask = new boolean[35937];
+	private SimpleBlockStorage storage = new SimpleBlockStorage();
 	MutableBlockPos pos = new MutableBlockPos();
 	
 	public LightPropagator() {
@@ -108,6 +111,7 @@ public class LightPropagator {
 		int z2 = z1 + 48;
 		
 		Arrays.fill(data, ColorMath.ALPHA);
+		storage.fill(level, x1, y1, z1);
 		
 		for (int x = x1; x < x2; x++) {
 			pos.setX(x);
@@ -115,7 +119,7 @@ public class LightPropagator {
 				pos.setY(y);
 				for (int z = z1; z < z2; z++) {
 					pos.setZ(z);
-					BlockState state = level.getBlockState(pos);
+					BlockState state = storage.getBlockState(pos);
 					LightInfo light = BlockLights.getLight(state);
 					if (light != null && canAffect(pos, light.getRadius(), secMin, secMax)) {
 						//fastFillLight(data, pos, light, secMin, secMax);
@@ -186,7 +190,7 @@ public class LightPropagator {
 					if (mask[maskIndex]) continue;
 					
 					BlockPos p = positions[maskIndex].set(start).move(offset);
-					BlockState state = level.getBlockState(p);
+					BlockState state = storage.getBlockState(p);
 					
 					LightTransformer transformer = BlockLights.getTransformer(state);
 					if (modify && transformer != null) {
@@ -199,7 +203,7 @@ public class LightPropagator {
 						mask[maskIndex] = true;
 						continue;
 					}
-					else if (blockFace(state, level, p, offset) && blockLight(state, level, p)) {
+					else if (blockFace(state, storage, p, offset) && blockLight(state, storage, p)) {
 						continue;
 					}
 					
@@ -215,11 +219,11 @@ public class LightPropagator {
 		buffers.get(1).clear();
 	}
 	
-	private boolean blockFace(BlockState state, Level level, BlockPos pos, Direction dir) {
+	private boolean blockFace(BlockState state, BlockGetter level, BlockPos pos, Direction dir) {
 		return state.isFaceSturdy(level, pos, dir) || state.isFaceSturdy(level, pos, dir.getOpposite());
 	}
 	
-	private boolean blockLight(BlockState state, Level level, BlockPos pos) {
+	private boolean blockLight(BlockState state, BlockGetter level, BlockPos pos) {
 		return state.getMaterial().isSolidBlocking() || !state.propagatesSkylightDown(level, pos);
 	}
 	

@@ -33,6 +33,7 @@ public class LevelShaderData {
 	private final ArrayBlockingQueue<BlockPos>[] innerUpdates;
 	private final Thread[] threads;
 	private byte updateTicks = 0;
+	private byte mapUpdate = 0;
 	private boolean upload;
 	private boolean run;
 	
@@ -204,12 +205,16 @@ public class LevelShaderData {
 			delayedSections.clear();
 		}
 		
-		if (upload) {
-			synchronized (texture) {
-				upload = false;
-				texture.upload();
+		if (mapUpdate++ > 4) {
+			mapUpdate = 0;
+			if (upload) {
+				synchronized (texture) {
+					upload = false;
+					texture.upload();
+				}
 			}
-		};
+			;
+		}
 	}
 	
 	private int getMultiIndex(BlockPos pos) {

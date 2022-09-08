@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import ru.paulevs.bismuthlib.gui.CFOptions;
 
 public class BlockStorage {
 	private static final Direction[] DIRECTIONS = new Direction[] {
@@ -30,7 +31,7 @@ public class BlockStorage {
 					pos.setZ(z1 + dz);
 					storage[storedIndex] = MAX;
 					BlockState state = level.getBlockState(pos);
-					if (BlockLights.getLight(state) != null || BlockLights.getTransformer(state) != null || blockLight(state, level, pos)) {
+					if (isStored(state) || blockLight(state, level, pos)) {
 						storage[storedIndex] = 0;
 					}
 					else {
@@ -62,5 +63,11 @@ public class BlockStorage {
 	
 	private boolean blockLight(BlockState state, Level level, BlockPos pos) {
 		return state.getMaterial().isSolidBlocking() || !state.propagatesSkylightDown(level, pos);
+	}
+	
+	private boolean isStored(BlockState state) {
+		if (BlockLights.getLight(state) != null) return true;
+		if (CFOptions.modifyColor() && BlockLights.getTransformer(state) != null) return true;
+		return false;
 	}
 }
