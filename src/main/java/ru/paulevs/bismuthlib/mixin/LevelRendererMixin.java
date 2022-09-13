@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import ru.paulevs.bismuthlib.BismuthLibClient;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -24,21 +25,22 @@ public class LevelRendererMixin {
 	@Inject(method = "renderLevel", at = @At("HEAD"))
 	private void cf_onRenderLevel(PoseStack poseStack, float f, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo info) {
 		if (this.level != null) {
-			ru.paulevs.bismuthlib.BismuthLibClient.update(
+			BismuthLibClient.update(
 				this.level,
 				Mth.floor(camera.getPosition().x / 16.0),
 				Mth.floor(camera.getPosition().y / 16.0),
 				Mth.floor(camera.getPosition().z / 16.0)
 			);
+			BismuthLibClient.bindWithUniforms();
 		}
 	}
 	
 	@Inject(method = "renderChunkLayer", at = @At(
 		value = "INVOKE",
-		target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupShaderLights(Lnet/minecraft/client/renderer/ShaderInstance;)V",
-		shift = Shift.AFTER
+		target = "Lnet/minecraft/client/renderer/ShaderInstance;apply()V",
+		shift = Shift.BEFORE
 	))
 	private void cf_onRenderChunkLayer(RenderType renderType, PoseStack poseStack, double d, double e, double f, Matrix4f matrix4f, CallbackInfo info) {
-		ru.paulevs.bismuthlib.BismuthLibClient.bindWithUniforms();
+		BismuthLibClient.bindWithUniforms();
 	}
 }
