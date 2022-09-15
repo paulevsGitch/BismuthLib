@@ -190,6 +190,13 @@ public class LevelShaderData {
 		}
 		
 		if (updateTicks++ > 16) {
+			if (upload) {
+				synchronized (texture) {
+					upload = false;
+					texture.upload();
+				}
+			}
+			
 			updateTicks = 0;
 			updateSections.forEach(pos -> {
 				int index = getMultiIndex(pos);
@@ -203,17 +210,6 @@ public class LevelShaderData {
 			updateSections.clear();
 			updateSections.addAll(delayedSections);
 			delayedSections.clear();
-		}
-		
-		if (mapUpdate++ > 4) {
-			mapUpdate = 0;
-			if (upload) {
-				synchronized (texture) {
-					upload = false;
-					texture.upload();
-				}
-			}
-			;
 		}
 	}
 	

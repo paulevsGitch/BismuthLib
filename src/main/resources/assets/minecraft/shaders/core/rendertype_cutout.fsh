@@ -16,6 +16,7 @@ uniform ivec3 playerSectionPos;
 uniform ivec2 dataScale;
 uniform int dataSide;
 uniform int fastLight;
+uniform float lightsBrightness;
 
 in vec4 defaultVertex;
 in vec3 colorMultiplier;
@@ -36,7 +37,7 @@ void main() {
 	}
 	int textureSize = textureSize(Sampler7, 0).x;
 	vec4 color = tex * ColorModulator;
-	color = addColoredLight(color, vertexColor, tex, Sampler7, blockPos, playerSectionPos, ChunkOffset, dataScale, dataSide, skylight, defaultVertex, fastLight, colorMultiplier, meshNormal);
+	color = addColoredLight(color, vertexColor, tex, Sampler7, blockPos, playerSectionPos, ChunkOffset, dataScale, dataSide, skylight, defaultVertex, fastLight, colorMultiplier, meshNormal, lightsBrightness);
 	color = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 	fragColor = color;
 }

@@ -144,13 +144,13 @@ float getDistanceMix(vec3 blockPos, vec3 chunkOffset, ivec2 dataScale) {
 	return clamp(m, 0.0, 1.0);
 }
 
-vec4 addColoredLight(vec4 color, vec4 vertex, vec4 tex, sampler2D sampler, vec3 blockPos, ivec3 playerSectionPos, vec3 chunkOffset, ivec2 dataScale, int dataSide, float skylight, vec4 defaultVertex, int fastLight, vec3 colorMultiplier, vec3 normal) {
+vec4 addColoredLight(vec4 color, vec4 vertex, vec4 tex, sampler2D sampler, vec3 blockPos, ivec3 playerSectionPos, vec3 chunkOffset, ivec2 dataScale, int dataSide, float skylight, vec4 defaultVertex, int fastLight, vec3 colorMultiplier, vec3 normal, float brightness) {
 	//return vec4(skylight, skylight, skylight, 1.0);
 	
 	vec4 def = tex * defaultVertex;
 	vec3 light1 = getInterpolatedColor(sampler, blockPos, playerSectionPos, chunkOffset, dataScale, dataSide);
 	vec3 light2 = getInterpolatedColor(sampler, blockPos + normal * 0.5, playerSectionPos, chunkOffset, dataScale, dataSide);
-	vec3 coloredLight = max(light1, light2) * (1.0 - skylight);
+	vec3 coloredLight = max(light1, light2) * (1.0 - skylight) * brightness;
 	float m = getDistanceMix(blockPos, chunkOffset, dataScale);
 	
 	vec3 hsv = rgbToHSV(colorMultiplier.rgb);

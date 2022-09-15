@@ -188,6 +188,7 @@ public class LightPropagator {
 					
 					int maskIndex = getMaskIndex(maskX, maskY, maskZ);
 					if (mask[maskIndex]) continue;
+					mask[maskIndex] = true;
 					
 					BlockPos p = positions[maskIndex].set(start).move(offset);
 					BlockState state = storage.getBlockState(p);
@@ -196,18 +197,15 @@ public class LightPropagator {
 					if (modify && transformer != null) {
 						int mixedColor = ColorMath.mulBlend(color, transformer.getColor(level, p));
 						transformers.add(new TransformerInfo(new SimpleLight(mixedColor, radius - i, false), p.immutable()));
-						mask[maskIndex] = true;
 						continue;
 					}
 					else if (BlockLights.getLight(state) != null) {
-						mask[maskIndex] = true;
 						continue;
 					}
 					else if (blockFace(state, storage, p, offset) && blockLight(state, storage, p)) {
 						continue;
 					}
 					
-					mask[maskIndex] = true;
 					setLight(data, p, color, secMin, secMax, true);
 					ends.add(p);
 				}

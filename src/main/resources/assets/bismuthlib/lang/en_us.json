@@ -16,5 +16,9 @@
 	"bismuthlib.options.threads": "Threads",
 	"bismuthlib.options.modifyColor": "Modify Light",
 	"bismuthlib.options.modifyColor.true": "Enabled",
-	"bismuthlib.options.modifyColor.false": "Disabled"
+	"bismuthlib.options.modifyColor.false": "Disabled",
+	"bismuthlib.options.brightSources": "Bright Sources",
+	"bismuthlib.options.brightSources.true": "Enabled",
+	"bismuthlib.options.brightSources.false": "Disabled",
+	"bismuthlib.options.brightness": "Brightness"
 }

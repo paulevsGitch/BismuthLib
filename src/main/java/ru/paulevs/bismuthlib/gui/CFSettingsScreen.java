@@ -25,6 +25,7 @@ public class CFSettingsScreen extends OptionsSubScreen {
 		this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
 		this.list.addBig(CFOptions.MAP_RADIUS_XZ);
 		this.list.addBig(CFOptions.MAP_RADIUS_Y);
+		this.list.addBig(CFOptions.BRIGHTNESS);
 		this.list.addSmall(CFOptions.OPTIONS);
 		this.addWidget(this.list);
 		

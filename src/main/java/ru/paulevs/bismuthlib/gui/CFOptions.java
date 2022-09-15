@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Locale;
 
 public class CFOptions {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -41,6 +42,9 @@ public class CFOptions {
 	private static boolean fastLight = getBool("fastLight", false);
 	private static int threads = getInt("threads", 4);
 	private static boolean modifyColor = getBool("modifyColor", false);
+	private static int brightness = getInt("brightness", 64);
+	private static float floatBrightness = brightness / 64F;
+	private static boolean brightSources = getBool("brightSources", false);
 	
 	public static final OptionInstance<Integer> MAP_RADIUS_XZ = new OptionInstance<>(
 		"bismuthlib.options.mapRadiusXZ",
@@ -70,6 +74,19 @@ public class CFOptions {
 			mapRadiusY = val;
 		}
 	);
+	public static final OptionInstance<Integer> BRIGHTNESS = new OptionInstance<>(
+		"bismuthlib.options.brightness",
+		OptionInstance.noTooltip(),
+		(component, i) -> Options.genericValueLabel(component, Component.translatable(String.format(Locale.ROOT, "%.2f", i / 64F))), //Options.genericValueLabel(component, i),
+		new OptionInstance.IntRange(0, 128),
+		brightness,
+		val -> {
+			setInt("brightness", val);
+			brightness = val;
+			floatBrightness = val / 64F;
+		}
+	);
+	
 	private static final OptionInstance<Boolean> FAST_LIGHT = new OptionInstance<>(
 		"bismuthlib.options.lightType",
 		OptionInstance.noTooltip(),
@@ -103,9 +120,20 @@ public class CFOptions {
 			modifyColor = val;
 		}
 	);
+	private static final OptionInstance<Boolean> BRIGHT_SOURCES = new OptionInstance<>(
+		"bismuthlib.options.brightSources",
+		OptionInstance.noTooltip(),
+		(component, bool) -> Component.translatable("bismuthlib.options.brightSources." + bool),
+		OptionInstance.BOOLEAN_VALUES,
+		brightSources,
+		val -> {
+			setBool("brightSources", val);
+			brightSources = val;
+		}
+	);
 	
 	public static final OptionInstance[] OPTIONS = new OptionInstance[] {
-		FAST_LIGHT, THREADS, MODIFY_COLOR
+		FAST_LIGHT, THREADS, MODIFY_COLOR, BRIGHT_SOURCES
 	};
 	
 	public static int getMapRadiusXZ() {
@@ -126,6 +154,14 @@ public class CFOptions {
 	
 	public static boolean modifyColor() {
 		return modifyColor;
+	}
+	
+	public static float getBrightness() {
+		return floatBrightness;
+	}
+	
+	public static boolean isBrightSources() {
+		return brightSources;
 	}
 	
 	private static int getInt(String name, int def) {
