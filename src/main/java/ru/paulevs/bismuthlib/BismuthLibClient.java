@@ -67,6 +67,7 @@ public class BismuthLibClient implements ClientModInitializer {
 	private static final ResourceLocation LIGHTMAP_ID = new ResourceLocation(MOD_ID, "colored_light");
 	private static LevelShaderData data;
 	
+	//private static GPULightPropagator gpuLight;
 	private static final Gson GSON = new GsonBuilder().create();
 	private static ResourceManager managerCache;
 	private static boolean fastLight = false;
@@ -86,6 +87,7 @@ public class BismuthLibClient implements ClientModInitializer {
 				RenderSystem.setShader(GameRenderer::getPositionTexShader);
 				RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 				RenderSystem.setShaderTexture(0, LIGHTMAP_ID);
+				//RenderSystem.setShaderTexture(0, gpuLight.getTexture());
 				BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
 				bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 				
@@ -342,11 +344,14 @@ public class BismuthLibClient implements ClientModInitializer {
 		
 		if (data == null) {
 			data = new LevelShaderData(w, h, count);
+			//gpuLight = new GPULightPropagator(w, h);
 			Minecraft.getInstance().getTextureManager().register(LIGHTMAP_ID, data.getTexture());
 		}
 		else if (data.getDataWidth() != w || data.getDataHeight() != h || count != data.getThreadCount()) {
 			data.dispose();
 			data = new LevelShaderData(w, h, count);
+			//gpuLight.dispose();
+			//gpuLight = new GPULightPropagator(w, h);
 			Minecraft.getInstance().getTextureManager().register(LIGHTMAP_ID, data.getTexture());
 		}
 		
@@ -365,6 +370,7 @@ public class BismuthLibClient implements ClientModInitializer {
 	
 	public static void update(Level level, int cx, int cy, int cz) {
 		data.update(level, cx, cy, cz);
+		//gpuLight.render();
 	}
 	
 	public static void updateSection(int cx, int cy, int cz) {
